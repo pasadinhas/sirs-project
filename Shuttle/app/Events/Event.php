@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace Shuttle\Events;
 
 abstract class Event
 {
