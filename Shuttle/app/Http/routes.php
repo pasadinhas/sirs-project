@@ -11,6 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+get('/', function () {
+    return view('home');
 });
+
+$router->controller('secure', 'SecureController');
+
+post('/login', ['as' => 'login', 'uses' => 'AuthenticationController@login']);
+
+get('/logout', ['as' => 'logout', 'uses' => 'AuthenticationController@logout']);
+
+get('/bookings', ['as' => 'bookings', 'uses' => 'BookingsController@index']);
+
+get('/users/create', ['as' => 'user.create', 'uses' => 'UserController@create']);
+
+post('/users', ['as' => 'user.store', 'uses' => 'UserController@store']);
+
