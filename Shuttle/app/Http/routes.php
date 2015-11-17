@@ -27,3 +27,6 @@ get('/users/create', ['as' => 'user.create', 'uses' => 'UserController@create'])
 
 post('/users', ['as' => 'user.store', 'uses' => 'UserController@store']);
 
+get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
+
+

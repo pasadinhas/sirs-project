@@ -15,6 +15,7 @@ class CreateShuttleTable extends Migration
         Schema::create('shuttles', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('seats');
+            $table->string('key', 32);
             $table->timestamps();
         });
     }

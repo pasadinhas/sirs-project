@@ -22,6 +22,9 @@ class CreateUsersTable extends Migration
             $table->integer('karma');
             $table->rememberToken();
             $table->timestamps();
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_manager')->default(false);
+            $table->boolean('is_driver')->default(false);
         });
     }
 
