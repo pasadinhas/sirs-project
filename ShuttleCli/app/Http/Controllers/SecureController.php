@@ -28,33 +28,47 @@ class SecureController extends Controller
 
     private function askForRequest()
     {
-        $secure = $this->encrypter->encrypt(json_encode(['timestamp' => microtime(true) * 10000]));
+        $secure = ['timestamp' => microtime(true) * 10000];
+        $encrypted = $this->encrypter->encrypt(json_encode($secure));
 
-        $response = $this->http->post($this->secure, ['json' => [
-            'id' => 1,
-            'secure' => $secure
-        ]]);
+        $response = $this->http->post($this->secure, [
+            'json' => [
+                'id' => 1,
+                'secure' => $encrypted
+            ]
+        ]);
 
         if ($response->getStatusCode() == 200)
         {
-            return json_decode($response->getBody()->getContents(), );
+            $decrypt = $this->encrypter->decrypt($response->getBody()->getContents());
+            return json_decode($decrypt);
         }
 
+        throw new \Exception("Login - not 200 response - Error code " . $response->getStatusCode());
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        $secure = $this->encrypter->encrypt(json_encode(['timestamp' => microtime(true) * 10000]));
-        $data = json_encode(['id' => 1, 'secure' => $secure]);
+        $response = $this->askForRequest();
 
-        //dd($data);
+        $secure = [
+            'nonce' => $response->nonce + 2,
+            'username' => $request->get('username'),
+            'password' => $request->get('password'),
+            'timestamp' => microtime(true) * 10000,
+        ];
 
-        $response = $this->http->post($this->secure, ['json' => ['id' => 1, 'secure' => $secure]]);
+        $encrypted = $this->encrypter->encrypt(json_encode($secure));
 
-        dd($response->getBody()->getContents());
+        $resp = $this->http->post($this->secure . '/auth', [
+            'json' => [
+                'id' => 1,
+                'secure' => $encrypted,
+            ]
+        ]);
 
-        // Send secure request request
-        // Send secure auth request
+        dd(json_decode($resp->getBody()->getContents()));
+
         // validade server response
     }
 
