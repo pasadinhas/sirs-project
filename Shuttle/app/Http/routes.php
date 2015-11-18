@@ -30,3 +30,8 @@ post('/users', ['as' => 'user.store', 'uses' => 'UserController@store']);
 get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
 
 
+get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create']);
+
+post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store']);
+
+get('/shuttle/{name}', ['as' => 'shuttle.show', 'uses' => 'ShuttleController@show']);
