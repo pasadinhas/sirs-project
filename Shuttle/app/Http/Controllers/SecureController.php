@@ -4,66 +4,143 @@ namespace Shuttle\Http\Controllers;
 
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Shuttle\Exceptions\Secure\BadRequestDataException;
+use Shuttle\Exceptions\Secure\BadRequestSchemaException;
+use Shuttle\Exceptions\Secure\InvalidTimestampException;
+use Shuttle\Exceptions\Secure\LoginException;
 use Shuttle\Http\Requests;
 use Illuminate\Cache\Repository as Cache;
+use Shuttle\Shuttle;
 
 class SecureController extends Controller
 {
+    private $crypter = null;
+
     public function __construct()
     {
     }
 
-    public function getCrypter()
+    public function getCrypter($key = null)
     {
-        return new Encrypter('22222222222222222222222222222222', 'AES-256-CBC');
-    }
-
-    public function getIndex()
-    {
-        return 2;
+        if ($key != null)
+        {
+            $this->crypter = new Encrypter($key, 'AES-256-CBC');
+        }
+        return $this->crypter;
     }
 
     public function postIndex(Request $request, Cache $cache)
     {
-        $crypter = $this->getCrypter();
+        list($name, $data) = $this->parseSecureRequest($request, ['timestamp']);
 
-        $id = $request->get('id');
-        $secure = $request->get('secure');
-        $decrypted = $crypter->decrypt($secure);
-        $json = json_decode($decrypted);
-        $timestamp = $json->timestamp;
+        $timestamp = $data->timestamp;
 
-        $time = intval(microtime(true) * 10000);
-        $nonce = mt_rand(1, 4294967296 - 4); // Max int 32 bits - 4
+        $this->assertValidTimestamp($timestamp);
 
-        $cache->put("shuttle.$id.nonce", $nonce, 1);
-        $cache->put("shuttle.$id.timestamp", $timestamp, 1);
+        $now = intval(microtime(true) * 10000);
+        $nonce = $this->generateNonce();
+
+        $cache->put("shuttle.$name.nonce", $nonce, 1);
+        $cache->put("shuttle.$name.timestamp", $timestamp, 1);
 
         $response = [
             'nonce' => $nonce,
             'timestamp' => $timestamp,
         ];
 
-        return $crypter->encrypt(json_encode($response));
+        return $this->secureResponseJson($response);
     }
 
     public function postAuth(Request $request, Cache $cache)
     {
-        $crypter = $this->getCrypter();
+        list($name, $data) = $this->parseSecureRequest($request, ['nonce', 'username', 'password', 'timestamp']);
 
-        $id = $request->get('id');
+        $this->assertValidTimestamp($data->timestamp, $cache->get("shuttle.$name.timestamp"));
+        $this->assertValidNonce($data->nonce, $cache->get("shuttle.$name.nonce"));
+
+        $result = Auth::once(['username' => $data->username, 'password' => $data->password]);
+
+        if ($result !== true)
+        {
+            throw new LoginException("Loggin in user {$data->username}");
+        }
+
+        $user = Auth::user();
+
+        $response = [
+            'username' => $user->username,
+            'email' => $user->email,
+            'nonce' => $data->nonce + 2,
+            'timestamp' => microtime(true) * 10000
+        ];
+
+        return $this->secureResponseJson($response);
+    }
+
+    protected function parseSecureRequest(Request $request, $keys = [])
+    {
+        if ( ! $request->has('id') || ! $request->has('secure'))
+        {
+            throw new BadRequestSchemaException();
+        }
+
+        $name = $request->get('id');
         $secure = $request->get('secure');
+
+        $shuttle = Shuttle::where('name', $name)->first();
+
+        if ( ! $shuttle)
+        {
+            throw new BadRequestDataException("Shuttle $name does not exist");
+        }
+
+        $crypter = $this->getCrypter($shuttle->key);
+
         $decrypted = $crypter->decrypt($secure);
         $json = json_decode($decrypted);
-        $timestamp = $json->timestamp;
-        $username = $json->username;
-        $password = $json->password;
-        $nonce = $json->nonce;
 
-        return [
-            'username' => $username,
-            'password' => $password,
-            'nonce.check' => $cache->get('shuttle.1.nonce') + 2 == $nonce,
-        ];
+        foreach ($keys as $key)
+        {
+            if ( ! isset($json->$key))
+            {
+                throw new BadRequestSchemaException("Secure should have key $key");
+            }
+        }
+
+        return [$name, $json];
+    }
+
+    protected function assertValidTimestamp($timestamp, $previous = null)
+    {
+        if ( ! $this->validateTimestamp($timestamp, $previous))
+        {
+            throw new InvalidTimestampException("Timestamp {{$timestamp}} is not valid at this time");
+        }
+    }
+
+    protected function validateTimestamp($timestamp, $previous = null)
+    {
+        $MAX_DELAY = 10 * 10000; // 10 seconds
+        $now = microtime(true) * 10000;
+        return ($previous ? $timestamp > $previous : true) && $timestamp > $now - $MAX_DELAY && $timestamp < $now + $MAX_DELAY;
+    }
+
+    /**
+     * @return int
+     */
+    public function generateNonce()
+    {
+        return mt_rand(1, 4294967296 - 4);
+    }
+
+    private function secureResponseJson($response)
+    {
+        return $this->getCrypter()->encrypt(json_encode($response));
+    }
+
+    private function assertValidNonce($nonce, $handshake_nonce)
+    {
+        return $nonce == $handshake_nonce + 2;
     }
 }

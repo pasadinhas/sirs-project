@@ -58,6 +58,7 @@ class SecureController extends Controller
         $this->assertValidTimestamp($response->timestamp, $handshake->timestamp);
         $this->assertValidNonce($response->nonce, $handshake->nonce);
 
+        dd($response);
         if ($response->login == true)
         {
             // Login User !!!!!!!!!
@@ -83,7 +84,7 @@ class SecureController extends Controller
     {
         $response = $this->http->post($this->secure . $uri, [
             'json' => [
-                'id' => 1,
+                'id' => 'S01',
                 'secure' => $this->encrypter->encrypt(json_encode($secure)),
             ]
         ]);
