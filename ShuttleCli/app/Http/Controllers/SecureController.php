@@ -6,6 +6,9 @@ use GuzzleHttp\Client;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 
+use ShuttleCli\Exceptions\Secure\BadNonceException;
+use ShuttleCli\Exceptions\Secure\BadStatusCodeException;
+use ShuttleCli\Exceptions\Secure\InvalidTimestampException;
 use ShuttleCli\Http\Requests;
 use ShuttleCli\Http\Controllers\Controller;
 use stdClass;
@@ -26,15 +29,62 @@ class SecureController extends Controller
         $this->encrypter = $encrypter;
     }
 
-    private function askForRequest()
+    protected function handshake()
     {
-        $secure = ['timestamp' => microtime(true) * 10000];
-        $encrypted = $this->encrypter->encrypt(json_encode($secure));
+        $secure = [
+            'timestamp' => microtime(true) * 10000
+        ];
 
-        $response = $this->http->post($this->secure, [
+        $response = $this->postSecureJson($secure);
+
+        $this->assertValidTimestamp($response->timestamp);
+
+        return $response;
+    }
+
+    public function login(Request $request)
+    {
+        $handshake = $this->handshake();
+
+        $secure = [
+            'nonce' => $handshake->nonce + 2,
+            'username' => $request->get('username'),
+            'password' => $request->get('password'),
+            'timestamp' => microtime(true) * 10000,
+        ];
+
+        $response = $this->postSecureJson($secure, '/auth');
+
+        $this->assertValidTimestamp($response->timestamp, $handshake->timestamp);
+        $this->assertValidNonce($response->nonce, $handshake->nonce);
+
+        if ($response->login == true)
+        {
+            // Login User !!!!!!!!!
+        }
+    }
+
+    protected function assertValidTimestamp($timestamp, $previous = null)
+    {
+        if ( ! $this->validateTimestamp($timestamp, $previous))
+        {
+            throw new InvalidTimestampException("Timestamp {{$timestamp}} is not valid at this time");
+        }
+    }
+
+    protected function validateTimestamp($timestamp, $previous = null)
+    {
+        $MAX_DELAY = 10 * 10000; // 10 seconds
+        $now = microtime(true) * 10000;
+        return ($previous ? $timestamp > $previous : true) && $timestamp > $now - $MAX_DELAY && $timestamp < $now + $MAX_DELAY;
+    }
+
+    protected function postSecureJson($secure = '', $uri = '')
+    {
+        $response = $this->http->post($this->secure . $uri, [
             'json' => [
                 'id' => 1,
-                'secure' => $encrypted
+                'secure' => $this->encrypter->encrypt(json_encode($secure)),
             ]
         ]);
 
@@ -44,36 +94,17 @@ class SecureController extends Controller
             return json_decode($decrypt);
         }
 
-        throw new \Exception("Login - not 200 response - Error code " . $response->getStatusCode());
+        $path = ($uri == '') ? '/' : $uri;
+        $code = $response->getStatusCode();
+
+        throw new BadStatusCodeException("Status code {{$code}} posting to '$path'");
     }
 
-    public function login(Request $request)
+    protected function assertValidNonce($nonce, $handshake_nonce)
     {
-        $response = $this->askForRequest();
-
-        $secure = [
-            'nonce' => $response->nonce + 2,
-            'username' => $request->get('username'),
-            'password' => $request->get('password'),
-            'timestamp' => microtime(true) * 10000,
-        ];
-
-        $encrypted = $this->encrypter->encrypt(json_encode($secure));
-
-        $resp = $this->http->post($this->secure . '/auth', [
-            'json' => [
-                'id' => 1,
-                'secure' => $encrypted,
-            ]
-        ]);
-
-        dd(json_decode($resp->getBody()->getContents()));
-
-        // validade server response
-    }
-
-    public function foo()
-    {
-        dd('t');
+        if ( ! $nonce == $handshake_nonce + 4)
+        {
+            throw new BadNonceException("Nonce is $nonce for handshake nonce $handshake_nonce");
+        }
     }
 }
