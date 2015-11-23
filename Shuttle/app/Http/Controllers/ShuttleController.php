@@ -2,6 +2,7 @@
 
 namespace Shuttle\Http\Controllers;
 
+use Laracasts\Flash\FlashNotifier;
 use Shuttle\Http\Controllers\Controller;
 use Shuttle\Http\Requests\CreateShuttleRequest;
 use Shuttle\Shuttle;
@@ -14,13 +15,14 @@ class ShuttleController extends Controller
         return view('shuttle.create');
     }
 
-    public function store(CreateShuttleRequest $request)
+    public function store(CreateShuttleRequest $request, FlashNotifier $flash)
     {
         Shuttle::create([
             'name' => $request->name,
             'seats' => $request->seats,
             'key' => $request->key,
         ]);
+        $flash->success('Shuttle successfully created!');
         return redirect('/');
     }
 
