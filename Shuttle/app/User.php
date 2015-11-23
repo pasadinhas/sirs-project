@@ -36,4 +36,19 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    public function isDriver()
+    {
+        return $this->is_driver;
+    }
+
+    public function isManager()
+    {
+        return $this->is_manager;
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
 }

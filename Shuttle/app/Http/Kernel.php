@@ -2,7 +2,13 @@
 
 namespace Shuttle\Http;
 
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Shuttle\Http\Middleware\AdminAuthentication;
+use Shuttle\Http\Middleware\Authenticate;
+use Shuttle\Http\Middleware\DriverAuthentication;
+use Shuttle\Http\Middleware\ManagerAuthentication;
+use Shuttle\Http\Middleware\RedirectIfAuthenticated;
 
 class Kernel extends HttpKernel
 {
@@ -26,8 +32,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Shuttle\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'guest' => \Shuttle\Http\Middleware\RedirectIfAuthenticated::class,
+        'auth' => Authenticate::class,
+        'auth.basic' => AuthenticateWithBasicAuth::class,
+        'guest' => RedirectIfAuthenticated::class,
+        'driver' => DriverAuthentication::class,
+        'manager' => ManagerAuthentication::class,
+        'admin' => AdminAuthentication::class,
     ];
 }

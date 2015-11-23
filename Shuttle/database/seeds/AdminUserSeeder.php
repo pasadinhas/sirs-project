@@ -1,10 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
-use Shuttle\User;
 
-class DatabaseSeeder extends Seeder
+class AdminUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,9 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Model::unguard();
-
-        User::create([
+        DB::table('users')->insert([
             'name' => 'Admin Santos de Matos',
             'username' => 'admin',
             'password' => bcrypt('admin'),
@@ -24,7 +20,5 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
             'email' => 'ASM_'.str_random(5).'@gmail.com',
         ]);
-
-        Model::reguard();
     }
 }

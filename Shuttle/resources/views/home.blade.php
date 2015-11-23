@@ -1,6 +1,7 @@
 @extends('app')
 
 @section('content')
+    @if(!Auth::check())
     <br>
     <br>
     <br>
@@ -20,4 +21,11 @@
             </form>
         </div>
     </div>
+    @else
+        <div class="jumbotron">
+            <h1 class="text-primary">Home For Shuttle Reservations</h1>
+            <h2 class="text-warning">We are the force that drives the world.</h2>
+            <img src="http://www.shuttlefinder.net/wp-content/uploads/2014/02/SuperShuttle_Van_HiRes.png" class="img-responsive center-block">
+        </div>
+    @endif
 @stop

@@ -30,8 +30,10 @@ post('/users', ['as' => 'user.store', 'uses' => 'UserController@store']);
 get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
 
 
-get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create']);
+get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create', 'middleware' => 'manager']);
 
-post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store']);
+post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store', 'middleware' => 'manager']);
 
+/* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */
 get('/shuttle/{name}', ['as' => 'shuttle.show', 'uses' => 'ShuttleController@show']);
+/* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */
