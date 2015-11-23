@@ -11,7 +11,7 @@
 
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{{ Auth::user()->name }}</h3>
+                        <h3 class="panel-title">{{ $user->name }}</h3>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -21,24 +21,21 @@
                                     <tbody>
                                     <tr>
                                         <td>Username:</td>
-                                        <td>{{ Auth::user()->username }}</td>
+                                        <td>{{ $user->username }}</td>
                                     </tr>
                                     <tr>
                                         <td>Email:</td>
-                                        <td>{{ Auth::user()->email }}</td>
+                                        <td>{{ $user->email }}</td>
                                     </tr>
                                     <tr>
                                         <td>ID Document</td>
-                                        <td>{{ Auth::user()->id_document }}</td>
+                                        <td>{{ $user->id_document }}</td>
                                     </tr>
 
-                                    <tr>
                                     <tr>
                                         <td>Karma</td>
-                                        <td>{{ Auth::user()->karma }}</td>
+                                        <td>{{ $user->karma }}</td>
                                     </tr>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>

@@ -2,6 +2,7 @@
 
 namespace Shuttle\Http\Controllers;
 
+use Auth;
 use Shuttle\Http\Controllers\Controller;
 use Shuttle\Http\Requests\CreateUserRequest;
 use Shuttle\User;
@@ -28,7 +29,8 @@ class UserController extends Controller
 
     public function profile()
     {
-        return view('user.profile');
+        $user = Auth::user();
+        return view('user.profile', compact('user'));
     }
 
 }
