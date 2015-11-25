@@ -9,7 +9,7 @@
         <div class="row-fluid">
             <div class="col-lg-1 welcome-text-box">
                 <h1 class="welcome-text">Welcome to Wonder Shuttle!</h1>
-                <p class="welcome-description">Pick a date and a destination, we take care of the rest!</p>
+                <p class="welcome-description">Pick a date and a destination, we and the Force will take care of the rest!</p>
             </div>
             <div class="col-lg-3 col-md-offset-1 col-md-2">
                 <h2>Login</h2>
