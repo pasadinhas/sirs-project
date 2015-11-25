@@ -34,6 +34,10 @@ get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@c
 
 post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store', 'middleware' => 'manager']);
 
+get('/trip/create', ['as' => 'trip.create', 'uses' => 'TripController@create', 'middleware' => 'manager']);
+
+post('/trip', ['as' => 'trip.store', 'uses' => 'TripController@store', 'middleware' => 'manager']);
+
 /* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */
 get('/shuttle/{name}', ['as' => 'shuttle.show', 'uses' => 'ShuttleController@show']);
 /* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */

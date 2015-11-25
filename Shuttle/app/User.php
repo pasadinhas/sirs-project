@@ -51,4 +51,9 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->is_admin;
     }
+
+    public function drives()
+    {
+        return $this->hasMany(Trip::class, 'driver_id');
+    }
 }

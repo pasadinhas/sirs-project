@@ -21,4 +21,9 @@ class Shuttle extends Model
      * @var array
      */
     protected $hidden = ['key'];
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class);
+    }
 }
