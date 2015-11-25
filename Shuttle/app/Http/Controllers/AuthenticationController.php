@@ -12,7 +12,7 @@ class AuthenticationController extends Controller
     {
         if (\Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')]))
         {
-            return redirect()->intended(route('bookings'));
+            return redirect()->intended(route('user.profile'));
         }
         else
         {
