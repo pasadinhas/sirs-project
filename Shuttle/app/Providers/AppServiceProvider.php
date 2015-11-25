@@ -14,8 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->share('authenticated', Auth::check());
-        view()->share('currentUser', Auth::user());
+        view()->share('authenticated', \Auth::check());
+        view()->share('currentUser', \Auth::user());
     }
 
     /**
