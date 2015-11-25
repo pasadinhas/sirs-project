@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
+
         User::truncate();
 
         User::create([
