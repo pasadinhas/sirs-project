@@ -8,7 +8,7 @@
             @endif
             @if($user->isManager() || $user->isAdmin())
                 <div class="btn-group">
-                    <button type="button" class="navbar-btn btn btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="navbar-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Trips <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="btn-group">
-                    <button type="button" class="navbar-btn btn btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="navbar-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Shuttles <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
