@@ -15,6 +15,12 @@ class ShuttleController extends Controller
         return view('shuttle.create');
     }
 
+    public function index()
+    {
+        $shuttles = Shuttle::all();
+        return view('shuttle.index', compact('shuttles'));
+    }
+
     public function store(CreateShuttleRequest $request, FlashNotifier $flash)
     {
         Shuttle::create([

@@ -32,6 +32,8 @@ get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile
 
 get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create', 'middleware' => 'manager']);
 
+get('/shuttle/', ['as' => 'shuttle.index', 'uses' => 'ShuttleController@index', 'middleware' => 'manager']);
+
 post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store', 'middleware' => 'manager']);
 
 get('/trip/create', ['as' => 'trip.create', 'uses' => 'TripController@create', 'middleware' => 'manager']);

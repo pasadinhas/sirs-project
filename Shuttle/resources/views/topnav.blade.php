@@ -26,7 +26,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('shuttle.create') }}" >Register Shuttle</a></li>
-                        <li><a href="{{ route('logout') }}" >View Shuttles</a> <!--TODO: Fix route --></li>
+                        <li><a href="{{ route('shuttle.index') }}" >View Shuttles</a> <!--TODO: Fix route --></li>
                     </ul>
                 </div>
 
