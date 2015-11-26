@@ -30,7 +30,7 @@
                     </ul>
                 </div>
 
-                <a href="{{ route('logout') }}" class="navbar-btn btn btn-primary" role="button">Users</a> <!--TODO: Fix route -->
+                <a href="{{ route('user.index') }}" class="navbar-btn btn btn-primary" role="button">Users</a> <!--TODO: Fix route -->
 
             @endif
             <div class="navbar-right">

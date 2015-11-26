@@ -29,10 +29,15 @@ post('/users', ['as' => 'user.store', 'uses' => 'UserController@store']);
 
 get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
 
+get('/users/driver/{id_document}', ['as' => 'user.driver', 'uses' => 'UserController@toggleDriver', 'middleware' => 'manager']);
+
+get('/users/', ['as' => 'user.index', 'uses' => 'UserController@index', 'middleware' => 'manager']);
 
 get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create', 'middleware' => 'manager']);
 
 get('/shuttle/', ['as' => 'shuttle.index', 'uses' => 'ShuttleController@index', 'middleware' => 'manager']);
+
+get('/shuttle/delete/{id}', ['as' => 'shuttle.delete', 'uses' => 'ShuttleController@delete']);
 
 post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store', 'middleware' => 'manager']);
 

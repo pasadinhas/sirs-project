@@ -21,6 +21,16 @@ class ShuttleController extends Controller
         return view('shuttle.index', compact('shuttles'));
     }
 
+    public function delete($id, FlashNotifier $flash)
+    {
+        $shuttle = Shuttle::find($id);
+
+        $shuttle->delete();
+
+        $flash->success('Shuttle successfully deleted!');
+        return redirect(route('shuttle.index'));
+    }
+
     public function store(CreateShuttleRequest $request, FlashNotifier $flash)
     {
         Shuttle::create([

@@ -14,6 +14,12 @@ class UserController extends Controller
         return view('user.create');
     }
 
+    public function index()
+    {
+        $users = User::all();
+        return view('user.index', compact('users'));
+    }
+
     public function store(CreateUserRequest $request) {
         $u = User::create([
             'name' => $request->name,
@@ -31,6 +37,17 @@ class UserController extends Controller
     {
         $user = Auth::user();
         return view('user.profile', compact('user'));
+    }
+
+    //TODO: NOT WORKING
+    public function toggleDriver($id_document)
+    {
+        $user = User::where('id_document', $id_document)->first();
+
+        $user->update(['is_driver' => 1,]);
+
+        return redirect(route('user.index'));
+
     }
 
 }
