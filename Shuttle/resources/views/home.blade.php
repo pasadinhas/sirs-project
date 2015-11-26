@@ -56,7 +56,7 @@
             <h1 class="text-primary">Wonder Shuttle salutes you!</h1>
             <h2 class="text-warning">We have the Force that drives the world.</h2>
             <br>
-            <img src="http://www.shuttlefinder.net/wp-content/uploads/2014/02/SuperShuttle_Van_HiRes.png" class="img-responsive center-block">
+            <img src="../imgs/logo.png" class="img-responsive center-block">
         </div>
     @endif
 @stop

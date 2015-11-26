@@ -16,3 +16,8 @@ body {
 .welcome-text{
     font-size: 74px !important;
 }
+
+.brand {
+    height: 34px !important;
+    bortder-radius: 2px;
+}
