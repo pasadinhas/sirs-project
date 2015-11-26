@@ -6,7 +6,7 @@
     <br>
     <div class="jumbotron row">
         <div class="col-md-offset-4 col-md-4">
-            <h2>Register Shuttle</h2>
+            <h2>Book a Trip</h2>
             <br>
             <form method="post" action="{{ route('booking.store') }}">
                 {{ csrf_field() }}

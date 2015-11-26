@@ -2,7 +2,7 @@
     {{-- */$user = Auth::user()/* --}}
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
-            <a href="{{ route('logout') }}" class="navbar-btn btn btn-primary" role="button">Book a Trip</a> <!--TODO: Fix route -->
+            <a href="{{ route('booking.create') }}" class="navbar-btn btn btn-primary" role="button">Book a Trip</a> <!--TODO: Fix route -->
             @if($user->isDriver())
                 <a href="{{ route('logout') }}" class="navbar-btn btn btn-primary" role="button">View Schedule</a> <!--TODO: Fix route -->
             @endif
