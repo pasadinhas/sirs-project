@@ -43,6 +43,8 @@ post('/shuttle', ['as' => 'shuttle.store', 'uses' => 'ShuttleController@store', 
 
 get('/trip/create', ['as' => 'trip.create', 'uses' => 'TripController@create', 'middleware' => 'manager']);
 
+get('/trip/', ['as' => 'trip.index', 'uses' => 'TripController@index', 'middleware' => 'manager']);
+
 post('/trip', ['as' => 'trip.store', 'uses' => 'TripController@store', 'middleware' => 'manager']);
 
 get('/booking/create', ['as' => 'booking.create', 'uses' => 'BookingController@create', 'middleware' => 'auth']);

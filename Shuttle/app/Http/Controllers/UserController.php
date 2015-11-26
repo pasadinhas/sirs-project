@@ -42,9 +42,11 @@ class UserController extends Controller
     //TODO: NOT WORKING
     public function toggleDriver($id_document)
     {
-        $user = User::where('id_document', $id_document)->first();
+        $user = User::find($id_document);
 
-        $user->update(['is_driver' => 1,]);
+        $user->driver = true;
+
+        $user->save();
 
         return redirect(route('user.index'));
 

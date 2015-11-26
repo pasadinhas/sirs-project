@@ -20,6 +20,12 @@ class TripController extends Controller
         return view('trip.create');
     }
 
+    public function index()
+    {
+        $trips = Trip::all();
+        return view('trip.index', compact('trips'));
+    }
+
     public function store(CreateTripRequest $request, FlashNotifier $flash)
     {
         if ( ! Shuttle::find($request->shuttle_id))

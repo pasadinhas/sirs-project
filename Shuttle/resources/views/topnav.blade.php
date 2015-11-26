@@ -16,7 +16,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('trip.create') }}" role="button">Create Trip</a></li>
-                        <li><a href="{{ route('logout') }}" >View Trips</a> <!--TODO: Fix route --></li>
+                        <li><a href="{{ route('trip.index') }}" >View Trips</a> <!--TODO: Fix route --></li>
                     </ul>
                 </div>
 
