@@ -39,12 +39,11 @@ class UserController extends Controller
         return view('user.profile', compact('user'));
     }
 
-    //TODO: NOT WORKING
     public function toggleDriver($id_document)
     {
-        $user = User::find($id_document);
+        $user = User::where('id_document', $id_document)->first();
 
-        $user->driver = true;
+        $user->is_driver = !($user->is_driver);
 
         $user->save();
 

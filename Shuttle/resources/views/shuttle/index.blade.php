@@ -25,7 +25,9 @@
                             <td>{{ $shuttle->id }}</td>
                             <td>{{ $shuttle->seats }}</td>
                             <td align="center" width="7%">
-
+                                <a href="{{ URL::route('shuttle.delete', array('id' => $shuttle->id)) }}"> <!--TODO: Change href-->
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
                             </td>
                             @if($user->isAdmin())
                                 <td align="center" width="10%">
