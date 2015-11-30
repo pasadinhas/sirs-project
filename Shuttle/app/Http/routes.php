@@ -15,8 +15,6 @@ get('/', function () {
     return view('home');
 });
 
-$router->controller('secure', 'SecureController');
-
 post('/login', ['as' => 'login', 'uses' => 'AuthenticationController@login']);
 
 get('/logout', ['as' => 'logout', 'uses' => 'AuthenticationController@logout']);
@@ -53,4 +51,11 @@ post('/booking', ['as' => 'booking.store', 'uses' => 'BookingController@store', 
 
 /* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */
 get('/shuttle/{name}', ['as' => 'shuttle.show', 'uses' => 'ShuttleController@show']);
-/* THE KEY IS SHOWN! DON'T PUSH TO PRODUCTION!! pls :) */
+
+/**
+ * Secure routing
+ */
+
+post('/secure/handshake', 'SecureController@handshake');
+post('/secure/handshake/auth', 'SecureController@authHandshake');
+post('/secure/auth', 'SecureController@auth');

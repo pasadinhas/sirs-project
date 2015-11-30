@@ -30,7 +30,30 @@ class SecureController extends Controller
         return $this->crypter;
     }
 
-    public function postIndex(Request $request, Cache $cache)
+    public function authHandshake(Request $request, Cache $cache)
+    {
+        list($name, $data) = $this->parseSecureRequest($request, ['timestamp']);
+
+        $timestamp = $data->timestamp;
+
+        $this->assertValidTimestamp($timestamp);
+
+        $now = intval(microtime(true) * 10000);
+        $nonce = $this->generateNonce();
+
+        $cache->put("shuttle.$name.login", true, 1);
+        $cache->put("shuttle.$name.nonce", $nonce, 1);
+        $cache->put("shuttle.$name.timestamp", $timestamp, 1);
+
+        $response = [
+            'nonce' => $nonce,
+            'timestamp' => $now,
+        ];
+
+        return $this->secureResponseJson($response);
+    }
+
+    public function handshake(Request $request, Cache $cache)
     {
         list($name, $data) = $this->parseSecureRequest($request, ['timestamp']);
 
@@ -46,13 +69,13 @@ class SecureController extends Controller
 
         $response = [
             'nonce' => $nonce,
-            'timestamp' => $timestamp,
+            'timestamp' => $now,
         ];
 
         return $this->secureResponseJson($response);
     }
 
-    public function postAuth(Request $request, Cache $cache)
+    public function auth(Request $request, Cache $cache)
     {
         list($name, $data) = $this->parseSecureRequest($request, ['nonce', 'username', 'password', 'timestamp']);
 
@@ -63,8 +86,12 @@ class SecureController extends Controller
 
         if ($result !== true)
         {
-            throw new LoginException("Loggin in user {$data->username}");
+            throw new LoginException("Logging in user: {$data->username}");
         }
+
+        // Generate session key
+        $key = Str::random(32);
+        $cache->put("shuttle.$name.key", $key, 60*8);
 
         $user = Auth::user();
 
@@ -72,7 +99,8 @@ class SecureController extends Controller
             'username' => $user->username,
             'email' => $user->email,
             'nonce' => $data->nonce + 2,
-            'timestamp' => microtime(true) * 10000
+            'timestamp' => microtime(true) * 10000,
+            'key' => $key,
         ];
 
         return $this->secureResponseJson($response);

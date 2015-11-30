@@ -4,6 +4,8 @@ get('/', function () {
     return view('home');
 });
 
+get('/trips', 'ShuttleController@trips');
+
 $router->group([
     'prefix' => 'secure',
     'as' => 'secure.',
