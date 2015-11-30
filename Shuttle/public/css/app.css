@@ -2,6 +2,11 @@ body {
     padding-top: 70px;
 }
 
+.table {
+    max-width: none !important;
+    word-wrap: break-word;
+}
+
 .row-fluid{
     margin-left: -27px;
     margin-top: 10px;
