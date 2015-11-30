@@ -51,4 +51,41 @@ class UserController extends Controller
 
     }
 
+    public function toggleAdmin($id_document)
+    {
+        $user = User::where('id_document', $id_document)->first();
+
+        $user->is_admin = !($user->is_admin);
+
+        $user->save();
+
+        return redirect(route('user.index'));
+
+    }
+
+    public function toggleManager($id_document)
+    {
+        $user = User::where('id_document', $id_document)->first();
+
+        $user->is_manager = !($user->is_manager);
+
+        $user->save();
+
+        return redirect(route('user.index'));
+
+    }
+
+    //TODO: NOT WORKING
+    public function setKarma($id_document)
+    {
+        $user = User::where('id_document', $id_document)->first();
+
+        $user->is_manager = !($user->is_manager);
+
+        $user->save();
+
+        return redirect(route('user.index'));
+
+    }
+
 }

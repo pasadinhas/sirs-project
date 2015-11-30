@@ -29,6 +29,12 @@ get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile
 
 get('/users/driver/{id_document}', ['as' => 'user.driver', 'uses' => 'UserController@toggleDriver', 'middleware' => 'manager']);
 
+get('/users/admin/{id_document}', ['as' => 'user.admin', 'uses' => 'UserController@toggleAdmin', 'middleware' => 'admin']);
+
+get('/users/manager/{id_document}', ['as' => 'user.manager', 'uses' => 'UserController@toggleManager', 'middleware' => 'manager']);
+
+post('/users/karma/{id_document}', ['as' => 'user.karma', 'uses' => 'UserController@setKarma', 'middleware' => 'manager']);
+
 get('/users/', ['as' => 'user.index', 'uses' => 'UserController@index', 'middleware' => 'manager']);
 
 get('/shuttle/create', ['as' => 'shuttle.create', 'uses' => 'ShuttleController@create', 'middleware' => 'manager']);
