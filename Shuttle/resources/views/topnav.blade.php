@@ -1,47 +1,52 @@
 @if (Auth::check())
-    {{-- */$user = Auth::user()/* --}}
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
+    <div class="container">
+        <!-- Static navbar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
 
-            <!-- All Users Tabs -->
-
-            <a href="/" style="margin-right: 2em;"><img class="brand" alt="Brand" src="../imgs/logo.png"></a>
-            <a href="{{ route('booking.index') }}" class="navbar-btn btn btn-primary" role="button">Book a Trip</a> <!--TODO: Fix route -->
-
-            <!-- Driver Specific Tabs -->
-
-            @if($user->isDriver())
-                <a href="{{ route('logout') }}" class="navbar-btn btn btn-default" role="button">View Schedule</a> <!--TODO: Fix route -->
-            @endif
-
-            <!-- Manager Specific Tabs -->
-
-            @if($user->isManager() || $user->isAdmin())
-                <div class="btn-group">
-                    <button type="button" class="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Trips <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('trip.create') }}" role="button">Create Trip</a></li>
-                        <li><a href="{{ route('trip.index') }}" >View Trips</a> <!--TODO: Fix route --></li>
-                    </ul>
+                <div class="navbar-header">
+                    <a href="/" class="pull-left"><img class="brand" alt="WonderShuttle" src="/imgs/logo.png"></a>
                 </div>
 
-                <a href="{{ route('shuttle.index') }}" class="navbar-btn btn btn-default" role="button">Manage Shuttles</a>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
 
-                <a href="{{ route('user.index') }}" class="navbar-btn btn btn-default" role="button">Users</a> <!--TODO: Fix route -->
+                        <!-- All Users Tabs -->
 
-            @endif
+                        <li {!! active('/') !!}><a href="/">Home</a></li>
+                        <li {!! active('booking') !!}><a href="{{route('booking.index')}}">Book a Shuttle</a></li>
+                        <li {!! active('booking/mine') !!}><a href="{{route('booking.mine')}}">My Bookings</a></li>
+                        
+                        <!-- Driver Specific Tabs -->
+                        
+                        @if (Auth::user()->isDriver())
+                            <li class="divider-vertical"></li>
+                            <li {!! active('logout') !!}><a href="{{route('logout')}}">My Schedule</a></li>
+                        @endif
 
-            <!-- Logout Section -->
+                        <!-- Manager Specific Tabs -->
 
-            <div class="navbar-right">
-                <a href="{{ route('logout') }}" class="navbar-btn btn btn-danger btn-xs" role="button">Logout</a>
-                <p class="navbar-text">Hello, <a href="{{route('user.profile')}}" class="navbar-link">{{$user->name}}</a></p>
-            </div>
+                        @if (Auth::user()->isManager() || Auth::user()->isAdmin())
+                            <li class="divider-vertical"></li>
+                            <li {!! active('trip') !!}><a href="{{route('trip.index')}}">Manage Trips</a></li>
+                            <li {!! active('shuttle') !!}><a href="{{route('shuttle.index')}}">Manage Shuttles</a></li>
+                            <li {!! active('user') !!}><a href="{{route('user.index')}}">Manage Users</a></li>
+                        @endif
+                    </ul>
+                    
+                    <!-- Auth links -- pulled right -->
+                    
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{route('user.profile')}}">Hello, {{ Auth::user()->name }}</a></li>
+                        <li><a href="{{route('logout')}}">Logout</a></li>
+                    </ul>
 
-        </div>
-    </nav>
+                </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+        </nav>
+    </div>
+
 @else
+    <!-- Fix fixed-topnav if there is no topnav -->
     <style>body {padding-top: 0px !important;}</style>
 @endif

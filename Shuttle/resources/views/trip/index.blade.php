@@ -27,7 +27,7 @@
                         <td>{{ $trip->origin }}</td>
                         <td>{{ $trip->destination }}</td>
                         <td>{{ $trip->leaves_at }}</td>
-                        <td>{{ $trip->arrives }}</td>
+                        <td>{{ $trip->arrives_at }}</td>
                     </tr>
                 @endforeach
                 </tbody>

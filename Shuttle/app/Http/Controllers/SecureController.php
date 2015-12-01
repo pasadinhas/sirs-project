@@ -21,14 +21,14 @@ class SecureController extends Controller
     {
     }
 
-    public function getCrypter($key = null)
-    {
-        if ($key != null)
-        {
-            $this->crypter = new Encrypter($key, 'AES-256-CBC');
-        }
-        return $this->crypter;
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | Public API
+    |--------------------------------------------------------------------------
+    |
+    | This are the methods responsible for handling the secure API calls
+    |
+    */
 
     public function authHandshake(Request $request, Cache $cache)
     {
@@ -105,6 +105,27 @@ class SecureController extends Controller
 
         return $this->secureResponseJson($response);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helper Methods
+    |--------------------------------------------------------------------------
+    |
+    | This are the methods that support the controller functionality.
+    | They should totally be extracted to a dedicated service.
+    |
+    */
+
+    public function getCrypter($key = null)
+    {
+        if ($key != null)
+        {
+            $this->crypter = new Encrypter($key, 'AES-256-CBC');
+        }
+        return $this->crypter;
+    }
+
+
 
     protected function parseSecureRequest(Request $request, $keys = [])
     {
