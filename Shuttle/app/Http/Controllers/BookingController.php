@@ -21,28 +21,38 @@ class BookingController extends Controller
 
     public function index()
     {
-        return view('booking.index');
-    }
+        $trips = Trip::all();
 
-    public function create()
-    {
-        return view('booking.create');
+        $reservations = Auth::user()->reservations;
+
+        return view('booking.index', compact('trips', 'reservations'));
     }
 
     public function store(CreateBookingRequest $request, FlashNotifier $flash)
     {
-        if ( ! Trip::find($request->trip_id))
-        {
-            $flash->error("Error creating booking. Trip $request->trip_id does not exist.");
-            return redirect()->back()->withInput();
-        }
+        $trip = Trip::findOrFail($request->get('trip_id'));
 
-        Booking::create([
-            'trip_id' => $request->trip_id,
-            'user_id' => Auth::user()->id,
-        ]);
+        $trip->passengers()->attach(Auth::user()->id);
 
-        $flash->success('Booking successfully created!');
-        return redirect('/');
+        $flash->success("You successfully booked a trip from {$trip->origin} to {$trip->destination}!");
+
+        return redirect(route('booking.index'));
+    }
+
+    public function destroy(Request $request, FlashNotifier $flash)
+    {
+        $trip = Trip::findOrFail($request->get('trip_id'));
+
+        $trip->passengers()->detach(Auth::user()->id);
+
+        $flash->error("Your reservation from {$trip->origin} to {$trip->destination} was canceled.");
+
+        return redirect()->back();
+    }
+
+    public function mine()
+    {
+        $reservations = Auth::user()->reservations;
+        return view('booking.mine', compact('reservations'));
     }
 }

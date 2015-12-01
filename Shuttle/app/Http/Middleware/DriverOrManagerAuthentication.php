@@ -3,9 +3,9 @@
 namespace Shuttle\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Auth\Guard;
 
-class DriverAuthentication
+class DriverOrManagerAuthentication
 {
     protected $auth;
 
@@ -38,7 +38,7 @@ class DriverAuthentication
 
         $user = $this->auth->user();
 
-        if ( $user->isDriver() ) {
+        if ($user->isDriver() || $user->isManager() || $user->isAdmin()) {
             return $next($request);
         } else {
             return redirect('/');

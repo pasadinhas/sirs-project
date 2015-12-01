@@ -2,16 +2,23 @@
     {{-- */$user = Auth::user()/* --}}
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
-            <a class="" href="{{'/'}}">
-                <img class="brand" alt="Brand" src="../imgs/logo.png">
-            </a>
-            <a href="{{ route('booking.create') }}" class="navbar-btn btn btn-primary" role="button">Book a Trip</a> <!--TODO: Fix route -->
+
+            <!-- All Users Tabs -->
+
+            <a href="/" style="margin-right: 2em;"><img class="brand" alt="Brand" src="../imgs/logo.png"></a>
+            <a href="{{ route('booking.index') }}" class="navbar-btn btn btn-primary" role="button">Book a Trip</a> <!--TODO: Fix route -->
+
+            <!-- Driver Specific Tabs -->
+
             @if($user->isDriver())
-                <a href="{{ route('logout') }}" class="navbar-btn btn btn-primary" role="button">View Schedule</a> <!--TODO: Fix route -->
+                <a href="{{ route('logout') }}" class="navbar-btn btn btn-default" role="button">View Schedule</a> <!--TODO: Fix route -->
             @endif
+
+            <!-- Manager Specific Tabs -->
+
             @if($user->isManager() || $user->isAdmin())
                 <div class="btn-group">
-                    <button type="button" class="navbar-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Trips <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
@@ -20,23 +27,19 @@
                     </ul>
                 </div>
 
-                <div class="btn-group">
-                    <button type="button" class="navbar-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Shuttles <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('shuttle.create') }}" >Register Shuttle</a></li>
-                        <li><a href="{{ route('shuttle.index') }}" >View Shuttles</a> <!--TODO: Fix route --></li>
-                    </ul>
-                </div>
+                <a href="{{ route('shuttle.index') }}" class="navbar-btn btn btn-default" role="button">Manage Shuttles</a>
 
-                <a href="{{ route('user.index') }}" class="navbar-btn btn btn-primary" role="button">Users</a> <!--TODO: Fix route -->
+                <a href="{{ route('user.index') }}" class="navbar-btn btn btn-default" role="button">Users</a> <!--TODO: Fix route -->
 
             @endif
+
+            <!-- Logout Section -->
+
             <div class="navbar-right">
-                <a href="{{ route('logout') }}" class="navbar-btn btn btn-primary btn-xs" role="button">Logout</a>
+                <a href="{{ route('logout') }}" class="navbar-btn btn btn-danger btn-xs" role="button">Logout</a>
                 <p class="navbar-text">Hello, <a href="{{route('user.profile')}}" class="navbar-link">{{$user->name}}</a></p>
             </div>
+
         </div>
     </nav>
 @else

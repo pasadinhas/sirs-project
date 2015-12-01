@@ -15,6 +15,11 @@ use Shuttle\User;
 
 class TripController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('manager');
+    }
+
     public function create()
     {
         return view('trip.create');

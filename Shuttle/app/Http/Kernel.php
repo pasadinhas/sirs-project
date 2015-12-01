@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Shuttle\Http\Middleware\AdminAuthentication;
 use Shuttle\Http\Middleware\Authenticate;
 use Shuttle\Http\Middleware\DriverAuthentication;
+use Shuttle\Http\Middleware\DriverOrManagerAuthentication;
 use Shuttle\Http\Middleware\ManagerAuthentication;
 use Shuttle\Http\Middleware\RedirectIfAuthenticated;
 
@@ -38,5 +39,6 @@ class Kernel extends HttpKernel
         'driver' => DriverAuthentication::class,
         'manager' => ManagerAuthentication::class,
         'admin' => AdminAuthentication::class,
+        'manager|driver' => DriverOrManagerAuthentication::class,
     ];
 }

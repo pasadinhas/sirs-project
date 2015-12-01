@@ -24,4 +24,9 @@ class Trip extends Model
     {
         return $this->belongsTo(Shuttle::class);
     }
+
+    public function passengers()
+    {
+        return $this->belongsToMany(User::class, 'bookings')->withTimestamps();
+    }
 }

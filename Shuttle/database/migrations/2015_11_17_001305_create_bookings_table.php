@@ -12,7 +12,7 @@ class CreateBookingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('booking', function (Blueprint $table) {
+        Schema::create('bookings', function (Blueprint $table) {
             $table->increments('id');
             $table->boolean('went')->nullable()->default(null);
             $table->integer('user_id')->index();

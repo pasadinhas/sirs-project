@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Shuttle\Trip;
 use Shuttle\User;
 
 class DatabaseSeeder extends Seeder
@@ -37,6 +38,34 @@ class DatabaseSeeder extends Seeder
             'is_driver' => true,
             'email' => 'MM_'.str_random(5).'@gmail.com',
         ]);
+
+        Trip::create([
+            'shuttle_id' => 1,
+            'driver_id' => 2,
+            'origin' => 'Evora',
+            'destination' => 'Lisboa',
+            'leaves_at' => \Carbon\Carbon::now()->addHour(),
+            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+        ]);
+
+        Trip::create([
+            'shuttle_id' => 1,
+            'driver_id' => 2,
+            'origin' => 'Alameda',
+            'destination' => 'Tagus',
+            'leaves_at' => \Carbon\Carbon::now()->addHour(),
+            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+        ]);
+
+        Trip::create([
+            'shuttle_id' => 1,
+            'driver_id' => 2,
+            'origin' => 'Porto',
+            'destination' => 'Coimbra',
+            'leaves_at' => \Carbon\Carbon::now()->addHour(),
+            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+        ]);
+
         Model::reguard();
     }
 }

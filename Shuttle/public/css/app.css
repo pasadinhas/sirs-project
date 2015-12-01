@@ -26,3 +26,11 @@ body {
     height: 34px !important;
     border-radius: 2px;
 }
+
+.jumbotron {
+    padding: 20px 40px !important;
+}
+
+.jumbotron h2 {
+    margin-bottom: 1em;
+}

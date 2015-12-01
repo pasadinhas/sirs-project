@@ -56,4 +56,9 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany(Trip::class, 'driver_id');
     }
+
+    public function reservations()
+    {
+        return $this->belongsToMany(Trip::class, 'bookings')->withTimestamps();
+    }
 }
