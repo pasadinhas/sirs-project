@@ -50,7 +50,7 @@
                                 <form action="{{ route('booking.store') }}" method="post">
                                     {{ csrf_field() }}
                                     <input type="hidden" name="trip_id" value="{{ $trip->id }}" />
-                                    <button type="submit" class="btn btn-success">
+                                    <button @unless($trip->canBook(Auth::user())) disabled @endunless type="submit" class="btn btn-success">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </button>
                                 </form>

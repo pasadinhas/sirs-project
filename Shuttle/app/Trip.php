@@ -4,6 +4,8 @@ namespace Shuttle;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Shuttle\Service\BookingService;
+use Shuttle\Service\SeatsService;
 
 class Trip extends Model
 {
@@ -34,5 +36,15 @@ class Trip extends Model
     public function scopeFuture($query)
     {
         return $query->where('leaves_at', '>=', new Carbon());
+    }
+
+    public function isLastHour()
+    {
+        return ! (new Carbon($this->leaves_at))->subHours(8)->isFuture();
+    }
+
+    public function canBook(User $user)
+    {
+        return (new BookingService())->canReserveNow($user, $this) && (new SeatsService())->hasSeat($this);
     }
 }

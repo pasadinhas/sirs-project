@@ -8,16 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laracasts\Flash\FlashNotifier;
 use Shuttle\Booking;
+use Shuttle\Exceptions\CannotBookYetException;
+use Shuttle\Exceptions\ShuttleIsFullException;
 use Shuttle\Http\Requests;
 use Shuttle\Http\Controllers\Controller;
 use Shuttle\Http\Requests\CreateBookingRequest;
+use Shuttle\Service\BookingService;
 use Shuttle\Trip;
 
 class BookingController extends Controller
 {
+    private $bookingService;
+
     function __construct()
     {
         $this->middleware('auth');
+        $this->bookingService = new BookingService();
     }
 
     public function index(Request $request)
@@ -54,9 +60,23 @@ class BookingController extends Controller
     {
         $trip = Trip::findOrFail($request->get('trip_id'));
 
-        $trip->passengers()->attach(Auth::user()->id);
-
-        $flash->success("You successfully booked a trip from {$trip->origin} to {$trip->destination}!");
+        try
+        {
+            $this->bookingService->book(Auth::user(), $trip);
+            $flash->success("You successfully booked a trip from {$trip->origin} to {$trip->destination}!");
+        }
+        catch (ShuttleIsFullException $e)
+        {
+            $flash->error("The shuttle is full.");
+        }
+        catch (CannotBookYetException $e)
+        {
+            $flash->error("You can't book that trip yet.");
+        }
+        catch (\Exception $e)
+        {
+            $flash->error("There was an error processing your request");
+        }
 
         return redirect(route('booking.index'));
     }
@@ -65,16 +85,22 @@ class BookingController extends Controller
     {
         $trip = Trip::findOrFail($request->get('trip_id'));
 
-        $trip->passengers()->detach(Auth::user()->id);
-
-        $flash->error("Your reservation from {$trip->origin} to {$trip->destination} was canceled.");
+        try
+        {
+            $this->bookingService->cancel(Auth::user(), $trip);
+            $flash->success("Your reservation from {$trip->origin} to {$trip->destination} was canceled.");
+        }
+        catch (\Exception $e)
+        {
+            $flash->error("There was an error processing your request");
+        }
 
         return redirect()->back();
     }
 
     public function mine()
     {
-        $reservations = Auth::user()->reservations;
+        $reservations = Auth::user()->reservations()->future()->get();
         return view('booking.mine', compact('reservations'));
     }
 }
