@@ -3,10 +3,9 @@
 namespace ShuttleCli\Services;
 
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Encryption\Encrypter as EncrypterClass;
-use Illuminate\Support\Facades\Cache;
-use ShuttleCli\Exceptions\Secure\InvalidTimestampException;
+use Illuminate\Cache\Repository;
+use Illuminate\Encryption\Encrypter;
+use ShuttleCli\Exceptions\Secure\BadStatusCodeException;
 use Illuminate\Http\Request;
 
 class SecureService
@@ -17,9 +16,11 @@ class SecureService
     private $validate;
     private $server;
     private $uri;
+    private $cache;
 
-    function __construct(Encrypter $encrypter)
+    function __construct(Encrypter $encrypter, Repository $cache)
     {
+        $this->cache = $cache;
         $this->http = new Client();
         $this->encrypter = $encrypter;
         $this->validate = new ValidatorService();
@@ -32,20 +33,6 @@ class SecureService
     // | Public API
     // +-----------------------------
 
-
-    public function handshake($auth = false)
-    {
-        $secure = [
-            'timestamp' => microtime(true) * 10000
-        ];
-
-        $response = $this->postSecureJson($secure, ($auth) ? '/auth' : '');
-
-        $this->validate->timestamp($response->timestamp);
-
-        return $response;
-    }
-
     public function login(Request $request)
     {
         $response = $this->request('/auth', [
@@ -53,19 +40,19 @@ class SecureService
             'password' => $request->get('password'),
         ]);
 
-        Cache::put('session.key', $response->key, 8*60); // key lasts 8 hours max
+        $this->cache->put('session.key', $response->key, 8*60); // key lasts 8 hours max
 
         return $response;
     }
 
     public function trips()
     {
-        return $this->sessionRequest('/trips');
+        return $this->sessionRequest('/trips')->trips;
     }
 
     public function trip($id)
     {
-        return $this->sessionRequest('/trip', ['id' => $id]);
+        return $this->sessionRequest('/trip', ['id' => $id])->trip;
     }
 
     // +-----------------------------
@@ -80,10 +67,8 @@ class SecureService
 
     protected function request($uri, $data = [])
     {
-        $handshake = $this->handshake();
-
         $secure = [
-            'nonce' => $handshake->nonce + 2,
+            'nonce' => mt_rand(1, 4294967290),
             'timestamp' => microtime(true) * 10000,
         ];
 
@@ -91,22 +76,22 @@ class SecureService
 
         $response = $this->postSecureJson($secure, $uri);
 
-        $this->validate->timestamp($response->timestamp, $handshake->timestamp);
-        $this->validate->nonce($response->nonce, $handshake->nonce);
+        $this->validate->timestamp($response->timestamp, $secure['timestamp']);
+        $this->validate->nonce($response->nonce, $secure['nonce']);
 
         return $response;
     }
 
     protected function session()
     {
-        $key = Cache::get('session.key');
+        $key = $this->cache->get('session.key');
 
         if ($key == null)
         {
             // TODO: oops
         }
 
-        $this->encrypter = new EncrypterClass($key, 'AES-256-CBC');
+        $this->encrypter = new Encrypter($key, 'AES-256-CBC');
 
         return $key;
     }

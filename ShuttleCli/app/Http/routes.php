@@ -1,9 +1,6 @@
 <?php
 
-get('/', function () {
-    return view('home');
-});
-
+get('/', 'ShuttleController@home');
 get('/trips', 'ShuttleController@trips');
 
 $router->group([
@@ -11,4 +8,5 @@ $router->group([
     'as' => 'secure.',
 ], function() {
     post('login', ['as' => 'login', 'uses' => 'SecureController@login']);
+    get('logout', ['as' => 'logout', 'uses' => 'SecureController@logout']);
 });

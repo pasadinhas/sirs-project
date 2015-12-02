@@ -8,6 +8,11 @@
         <div class="col-md-offset-4 col-md-4">
             <h2>Login</h2>
             <br>
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <form method="post" action="{{ route('secure.login') }}">
                 {{ csrf_field() }}
                 <div class="form-group">

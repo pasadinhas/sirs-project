@@ -8,25 +8,35 @@
 
 namespace ShuttleCli\Http\Controllers;
 
-use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Cache\Repository;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Cache;
 use ShuttleCli\Services\SecureService;
 
 class ShuttleController extends Controller
 {
     private $secure;
+    private $cache;
 
-    function __construct(Encrypter $encrypter)
+    function __construct(Encrypter $encrypter, Repository $cache)
     {
-        $this->secure = new SecureService($encrypter);
+        $this->cache = $cache;
+        $this->secure = new SecureService($encrypter, $cache);
+        $this->middleware('busdriver', ['except' => 'home']);
+        $this->middleware('guest', ['only' => 'home']);
+    }
+
+    public function home()
+    {
+        return view('home');
     }
 
     public function trips()
     {
-        if ( ! Cache::has('trips'))
+        if ( true || ! Cache::has('trips'))
         {
             $trips = $this->secure->trips();
-            Cache::put('trips', $trips, 120);
+            Cache::put('trips', $trips, 1);
         }
         else
         {

@@ -4,6 +4,7 @@ namespace ShuttleCli\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Cache;
 
 class RedirectIfAuthenticated
 {
@@ -34,8 +35,8 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next)
     {
-        if ($this->auth->check()) {
-            return redirect('/home');
+        if (Cache::has('session.key')) {
+            return redirect('/trips');
         }
 
         return $next($request);
