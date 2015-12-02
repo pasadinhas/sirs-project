@@ -5,6 +5,7 @@ namespace Shuttle\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
 use Laracasts\Flash\FlashNotifier;
 use Shuttle\Http\Requests;
 use Shuttle\Http\Controllers\Controller;
@@ -17,7 +18,8 @@ class TripController extends Controller
 {
     function __construct()
     {
-        $this->middleware('manager');
+        $this->middleware('manager', ['except' => ['schedule']]);
+        $this->middleware('driver', ['only' => 'schedule']);
     }
 
     public function create()
@@ -69,8 +71,10 @@ class TripController extends Controller
         return redirect('/');
     }
 
-    public function show($name)
+    public function schedule()
     {
-
+        $trips = Auth::user()->drives()->future()->get();
+        return view('trip.schedule', compact('trips'));
     }
+
 }

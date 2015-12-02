@@ -21,7 +21,7 @@
                         
                         @if (Auth::user()->isDriver())
                             <li class="divider-vertical"></li>
-                            <li {!! active('logout') !!}><a href="{{route('logout')}}">My Schedule</a></li>
+                            <li {!! active('trip/schedule') !!}><a href="{{route('trip.schedule')}}">My Schedule</a></li>
                         @endif
 
                         <!-- Manager Specific Tabs -->

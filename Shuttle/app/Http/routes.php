@@ -15,7 +15,8 @@ post('shuttle/{id}/key', ['uses' => 'ShuttleController@key', 'as' => 'shuttle.ed
  * Trip Management
  */
 
-resource('trip', 'TripController', ['only' => ['index', 'show', 'store', 'create', 'destroy']]);
+resource('trip', 'TripController', ['only' => ['index', 'store', 'create', 'destroy']]);
+get('schedule', ['as' => 'trip.schedule', 'uses' => 'TripController@schedule']);
 
 /**
  * Booking Management
@@ -47,6 +48,6 @@ get('/logout', ['as' => 'logout', 'uses' => 'AuthenticationController@logout']);
  * Secure API
  */
 
-post('/secure/handshake', 'SecureController@handshake');
-post('/secure/handshake/auth', 'SecureController@authHandshake');
 post('/secure/auth', 'SecureController@auth');
+post('/secure/trips', 'SecureController@trips');
+post('/secure/trip', 'SecureController@trip');

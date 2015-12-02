@@ -4,6 +4,21 @@
     <div class="jumbotron">
         <h2>Book a Trip!</h2>
         <div class="panel">
+
+            <div class="container">
+
+                <h3>Filter trips</h3>
+
+                <form class="form-inline">
+                    <input class="form-control" type="text" name="origin" value="{{Input::get('origin')}}" placeholder="From...">
+                    <input class="form-control" type="text" name="destination" value="{{Input::get('destination')}}" placeholder="To...">
+                    <input class="form-control" type="date" name="day" value="{{Input::get('day')}}">
+                    <button type="submit" class="btn bg-primary">Search</button>
+                </form>
+
+            </div>
+            <br><br>
+
             <table class="table table-striped">
                 <thead>
                     <tr>

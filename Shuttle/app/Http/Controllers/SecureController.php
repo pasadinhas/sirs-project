@@ -5,6 +5,8 @@ namespace Shuttle\Http\Controllers;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Shuttle\Exceptions\NoSecureLoginException;
 use Shuttle\Exceptions\Secure\BadRequestDataException;
 use Shuttle\Exceptions\Secure\BadRequestSchemaException;
 use Shuttle\Exceptions\Secure\InvalidTimestampException;
@@ -12,13 +14,18 @@ use Shuttle\Exceptions\Secure\LoginException;
 use Shuttle\Http\Requests;
 use Illuminate\Cache\Repository as Cache;
 use Shuttle\Shuttle;
+use Shuttle\Trip;
 
 class SecureController extends Controller
 {
     private $crypter = null;
+    private $shuttle = null;
+    private $cache = null;
+    private $nonce = null;
 
-    public function __construct()
+    public function __construct(Cache $cache)
     {
+        $this->cache = $cache;
     }
 
     /*
@@ -30,80 +37,47 @@ class SecureController extends Controller
     |
     */
 
-    public function authHandshake(Request $request, Cache $cache)
+
+    public function auth(Request $request)
     {
-        list($name, $data) = $this->parseSecureRequest($request, ['timestamp']);
-
-        $timestamp = $data->timestamp;
-
-        $this->assertValidTimestamp($timestamp);
-
-        $now = intval(microtime(true) * 10000);
-        $nonce = $this->generateNonce();
-
-        $cache->put("shuttle.$name.login", true, 1);
-        $cache->put("shuttle.$name.nonce", $nonce, 1);
-        $cache->put("shuttle.$name.timestamp", $timestamp, 1);
-
-        $response = [
-            'nonce' => $nonce,
-            'timestamp' => $now,
-        ];
-
-        return $this->secureResponseJson($response);
-    }
-
-    public function handshake(Request $request, Cache $cache)
-    {
-        list($name, $data) = $this->parseSecureRequest($request, ['timestamp']);
-
-        $timestamp = $data->timestamp;
-
-        $this->assertValidTimestamp($timestamp);
-
-        $now = intval(microtime(true) * 10000);
-        $nonce = $this->generateNonce();
-
-        $cache->put("shuttle.$name.nonce", $nonce, 1);
-        $cache->put("shuttle.$name.timestamp", $timestamp, 1);
-
-        $response = [
-            'nonce' => $nonce,
-            'timestamp' => $now,
-        ];
-
-        return $this->secureResponseJson($response);
-    }
-
-    public function auth(Request $request, Cache $cache)
-    {
-        list($name, $data) = $this->parseSecureRequest($request, ['nonce', 'username', 'password', 'timestamp']);
-
-        $this->assertValidTimestamp($data->timestamp, $cache->get("shuttle.$name.timestamp"));
-        $this->assertValidNonce($data->nonce, $cache->get("shuttle.$name.nonce"));
+        $data = $this->validateRequest($request, ['username', 'password'], true);
 
         $result = Auth::once(['username' => $data->username, 'password' => $data->password]);
 
-        if ($result !== true)
+        if ($result !== true || ! Auth::user()->isDriver())
         {
             throw new LoginException("Logging in user: {$data->username}");
         }
 
         // Generate session key
         $key = Str::random(32);
-        $cache->put("shuttle.$name.key", $key, 60*8);
+        $this->cache->put("shuttle.{$this->shuttle->name}.key", $key, 60*8);
+        $this->cache->put("shuttle.{$this->shuttle->name}.user", Auth::user(), 60*8);
 
-        $user = Auth::user();
+        return $this->encryptJson(['key' => $key]);
+    }
 
-        $response = [
-            'username' => $user->username,
-            'email' => $user->email,
-            'nonce' => $data->nonce + 2,
-            'timestamp' => microtime(true) * 10000,
-            'key' => $key,
-        ];
+    public function trips(Request $request)
+    {
+        $this->validateRequest($request);
+        $user = $this->cache->get("shuttle.{$this->shuttle->name}.user");
+        $trips = $this->shuttle->trips()
+            ->where('driver_id', $user->id)
+            ->future()
+            ->get();
+        return $this->encryptJson(['trips' => $trips->toArray()]);
+    }
 
-        return $this->secureResponseJson($response);
+    public function trip(Request $request)
+    {
+        $data = $this->validateRequest($request, ['id']);
+        $user = $this->cache->get("shuttle.{$this->shuttle->name}.user");
+        $trips = $this->shuttle->trips()
+            ->where('id', $data->id)
+            ->where('driver_id', $user->id)
+            ->future()
+            ->get();
+        return $this->encryptJson(['trips' => $trips->toArray()]);
     }
 
     /*
@@ -127,7 +101,7 @@ class SecureController extends Controller
 
 
 
-    protected function parseSecureRequest(Request $request, $keys = [])
+    protected function validateRequest(Request $request, $keys = [], $kek = false)
     {
         if ( ! $request->has('id') || ! $request->has('secure'))
         {
@@ -137,17 +111,24 @@ class SecureController extends Controller
         $name = $request->get('id');
         $secure = $request->get('secure');
 
-        $shuttle = Shuttle::where('name', $name)->first();
+        $shuttle = $this->findShuttle($name);
 
-        if ( ! $shuttle)
+        if ( ! $kek)
         {
-            throw new BadRequestDataException("Shuttle $name does not exist");
+            // must exist a session
+            if ( ! $this->cache->has("shuttle.{$this->shuttle->name}.key")
+                || ! $this->cache->has("shuttle.{$this->shuttle->name}.user"))
+            {
+                throw new NoSecureLoginException();
+            }
         }
 
-        $crypter = $this->getCrypter($shuttle->key);
+        $crypter = $this->chooseEncrypter($kek, $shuttle);
 
         $decrypted = $crypter->decrypt($secure);
         $json = json_decode($decrypted);
+
+        $keys = array_merge($keys, ['timestamp', 'nonce']);
 
         foreach ($keys as $key)
         {
@@ -157,39 +138,67 @@ class SecureController extends Controller
             }
         }
 
-        return [$name, $json];
+        $this->assertValidTimestamp($json->timestamp, $shuttle->name);
+        $this->nonce = $json->nonce;
+        return $json;
     }
 
-    protected function assertValidTimestamp($timestamp, $previous = null)
+    protected function assertValidTimestamp($timestamp, $name)
     {
-        if ( ! $this->validateTimestamp($timestamp, $previous))
+        $previousTimestamp = $this->cache->get("shuttle.$name.timestamp");
+
+        if ( ! $this->validTimestamp($timestamp, $previousTimestamp))
         {
-            throw new InvalidTimestampException("Timestamp {{$timestamp}} is not valid at this time");
+            throw new InvalidTimestampException("Timestamp {{$timestamp}} is not valid now.");
         }
+
+        $this->cache->forever("shuttle.$name.timestamp", $timestamp);
     }
 
-    protected function validateTimestamp($timestamp, $previous = null)
+    protected function validTimestamp($timestamp, $previous = null)
     {
         $MAX_DELAY = 10 * 10000; // 10 seconds
         $now = microtime(true) * 10000;
-        return ($previous ? $timestamp > $previous : true) && $timestamp > $now - $MAX_DELAY && $timestamp < $now + $MAX_DELAY;
+        // TODO: this should be > and not >= . It's >= for debug.
+        return ($previous ? $timestamp >= $previous : true) && $timestamp > $now - $MAX_DELAY && $timestamp < $now + $MAX_DELAY;
     }
 
-    /**
-     * @return int
-     */
-    public function generateNonce()
+    private function encryptJson($response)
     {
-        return mt_rand(1, 4294967296 - 4);
-    }
+        $response = array_merge($response, [
+            'nonce' => $this->nonce + 2,
+            'timestamp' => microtime(true) * 10000,
+        ]);
 
-    private function secureResponseJson($response)
-    {
         return $this->getCrypter()->encrypt(json_encode($response));
     }
 
-    private function assertValidNonce($nonce, $handshake_nonce)
+    /**
+     * @param $name
+     * @return mixed
+     * @throws BadRequestDataException
+     */
+    protected function findShuttle($name)
     {
-        return $nonce == $handshake_nonce + 2;
+        $shuttle = Shuttle::where('name', $name)->first();
+
+        if (!$shuttle) {
+            throw new BadRequestDataException("Shuttle $name does not exist");
+        }
+
+        $this->shuttle = $shuttle;
+        return $shuttle;
+    }
+
+    /**
+     * @param $kek
+     * @param $shuttle
+     * @return array
+     */
+    protected function chooseEncrypter($kek, $shuttle)
+    {
+        $key = ($kek) ? $shuttle->key : $this->cache->get("shuttle.{$shuttle->name}.key");
+        $this->crypter = new Encrypter($key, 'AES-256-CBC');
+        return $this->crypter;
     }
 }

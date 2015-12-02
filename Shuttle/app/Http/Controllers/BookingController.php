@@ -2,6 +2,7 @@
 
 namespace Shuttle\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +20,30 @@ class BookingController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $trips = Trip::all();
+        $trips = Trip::future();
+
+        if ($request->has('origin') && $request->get('origin') != null)
+        {
+            $origin = $request->get('origin');
+            $trips->where('origin', 'LIKE', "%$origin%");
+        }
+
+        if ($request->has('destination') && $request->get('destination') != null)
+        {
+            $destination = $request->get('destination');
+            $trips->where('destination', 'LIKE', "%$destination%");
+        }
+
+        if ($request->has('day') && $request->get('day') != null)
+        {
+            $day = new Carbon($request->get('day'));
+            $dayAfter = (new Carbon($request->get('day')))->addDay();
+            $trips->whereBetween('leaves_at', [$day, $dayAfter]);
+        }
+
+        $trips = $trips->get();
 
         $reservations = Auth::user()->reservations;
 

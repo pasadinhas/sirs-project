@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Shuttle\Shuttle;
 use Shuttle\Trip;
 use Shuttle\User;
 
@@ -20,7 +21,7 @@ class DatabaseSeeder extends Seeder
         User::truncate();
 
         User::create([
-            'name' => 'Admin Santos de Matos',
+            'name' => 'David Matos',
             'username' => 'admin',
             'password' => bcrypt('admin'),
             'id_document' => str_random(10),
@@ -30,7 +31,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Manuel "Má Onda" Meco',
+            'name' => 'Manuel Pereira',
             'username' => 'driver',
             'password' => bcrypt('driver'),
             'id_document' => str_random(10),
@@ -39,13 +40,21 @@ class DatabaseSeeder extends Seeder
             'email' => 'MM_'.str_random(5).'@gmail.com',
         ]);
 
+        Shuttle::truncate();
+
+        Shuttle::create([
+            'name' => 'S01',
+            'seats' => 42,
+            'key' => 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+        ]);
+
         Trip::create([
             'shuttle_id' => 1,
             'driver_id' => 2,
             'origin' => 'Evora',
             'destination' => 'Lisboa',
-            'leaves_at' => \Carbon\Carbon::now()->addHour(),
-            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+            'leaves_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(10,45)),
+            'arrives_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(120,180)),
         ]);
 
         Trip::create([
@@ -53,8 +62,8 @@ class DatabaseSeeder extends Seeder
             'driver_id' => 2,
             'origin' => 'Alameda',
             'destination' => 'Tagus',
-            'leaves_at' => \Carbon\Carbon::now()->addHour(),
-            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+            'leaves_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(60,90)),
+            'arrives_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(190,280)),
         ]);
 
         Trip::create([
@@ -62,8 +71,8 @@ class DatabaseSeeder extends Seeder
             'driver_id' => 2,
             'origin' => 'Porto',
             'destination' => 'Coimbra',
-            'leaves_at' => \Carbon\Carbon::now()->addHour(),
-            'arrives_at' => \Carbon\Carbon::now()->addHours(2),
+            'leaves_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(120,180)),
+            'arrives_at' => \Carbon\Carbon::now()->addMinutes(mt_rand(300,400)),
         ]);
 
         Model::reguard();

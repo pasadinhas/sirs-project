@@ -2,6 +2,7 @@
 
 namespace Shuttle;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Trip extends Model
@@ -28,5 +29,10 @@ class Trip extends Model
     public function passengers()
     {
         return $this->belongsToMany(User::class, 'bookings')->withTimestamps();
+    }
+
+    public function scopeFuture($query)
+    {
+        return $query->where('leaves_at', '>=', new Carbon());
     }
 }
