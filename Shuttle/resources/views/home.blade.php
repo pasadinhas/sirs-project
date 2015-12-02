@@ -2,6 +2,7 @@
 
 @section('content')
     @if(!Auth::check())
+
     <br>
     <br>
     <br>
@@ -16,6 +17,9 @@
                 <br>
                 <form method="post" action="{{ route('login') }}">
                     {{ csrf_field() }}
+                    <div class="form-group">
+                        {!! Recaptcha::render() !!}
+                    </div>
                     <div class="form-group">
                         <input class="form-control" type="text" name="username" placeholder="Username">
                     </div>

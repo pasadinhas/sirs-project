@@ -13,8 +13,10 @@ use Shuttle\Exceptions\Secure\InvalidTimestampException;
 use Shuttle\Exceptions\Secure\LoginException;
 use Shuttle\Http\Requests;
 use Illuminate\Cache\Repository as Cache;
+use Shuttle\Service\BookingService;
 use Shuttle\Shuttle;
 use Shuttle\Trip;
+use Shuttle\User;
 
 class SecureController extends Controller
 {
@@ -76,8 +78,34 @@ class SecureController extends Controller
             ->where('id', $data->id)
             ->where('driver_id', $user->id)
             ->future()
-            ->get();
-        return $this->encryptJson(['trips' => $trips->toArray()]);
+            ->with('passengers')
+            ->first();
+        return $this->encryptJson(['trip' => $trips->toArray()]);
+    }
+
+    public function checkin(Request $request)
+    {
+        $data = $this->validateRequest($request, ['id', 'attendances']);
+
+        $service = new BookingService();
+
+        foreach ($data->attendances as $attendance)
+        {
+            if ($attendance->user && $attendance->trip && $attendance->trip == $data->id)
+            {
+                $user = User::find($attendance->user);
+                $trip = Trip::find($attendance->trip);
+
+                if ($user && $trip)
+                {
+                    $service->checkin($user, $trip);
+                }
+            }
+        }
+
+        $service->markMissing($trip);
+
+        return $this->encryptJson([]);
     }
 
     /*

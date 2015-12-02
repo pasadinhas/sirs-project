@@ -3,6 +3,8 @@
 namespace Shuttle\Http\Controllers;
 
 use Auth;
+use Illuminate\Http\Request;
+use Laracasts\Flash\FlashNotifier;
 use Shuttle\Http\Controllers\Controller;
 use Shuttle\Http\Requests\CreateUserRequest;
 use Shuttle\User;
@@ -39,15 +41,21 @@ class UserController extends Controller
         return view('user.profile', compact('user'));
     }
 
-    public function toggleDriver($id_document)
+    public function toggleDriver($id, FlashNotifier $flash)
     {
-        $user = User::where('id_document', $id_document)->first();
+        $user = User::find($id);
+
+        if ($user->isDriver() && $user->drives()->future()->count() > 0)
+        {
+            $flash->error("{$user->name} has Trips he needs to drive so he must stay a driver.");
+            return back();
+        }
 
         $user->is_driver = !($user->is_driver);
 
         $user->save();
 
-        return redirect(route('user.index'));
+        return back();
 
     }
 
@@ -63,24 +71,24 @@ class UserController extends Controller
 
     }
 
-    public function toggleManager($id_document)
+    public function toggleManager($id)
     {
-        $user = User::where('id_document', $id_document)->first();
+        $user = User::find($id);
 
         $user->is_manager = !($user->is_manager);
 
         $user->save();
 
-        return redirect(route('user.index'));
+        return redirect()->back();
 
     }
 
     //TODO: NOT WORKING
-    public function setKarma($id_document)
+    public function setKarma(Request $request, $id)
     {
-        $user = User::where('id_document', $id_document)->first();
+        $user = User::find($id);
 
-        $user->is_manager = !($user->is_manager);
+        $user->karma = $request->get('karma');
 
         $user->save();
 

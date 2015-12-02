@@ -31,11 +31,11 @@ get('booking/mine', ['as' => 'booking.mine', 'uses' => 'BookingController@mine']
 
 resource('user', 'UserController');
 
-get('/users/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
-get('/users/driver/{id_document}', ['as' => 'user.driver', 'uses' => 'UserController@toggleDriver', 'middleware' => 'manager']);
-get('/users/admin/{id_document}', ['as' => 'user.admin', 'uses' => 'UserController@toggleAdmin', 'middleware' => 'admin']);
-get('/users/manager/{id_document}', ['as' => 'user.manager', 'uses' => 'UserController@toggleManager', 'middleware' => 'manager']);
-post('/users/karma/{id_document}', ['as' => 'user.karma', 'uses' => 'UserController@setKarma', 'middleware' => 'manager']);
+get('/user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
+get('/user/{id}/driver', ['as' => 'user.driver', 'uses' => 'UserController@toggleDriver', 'middleware' => 'manager']);
+//get('/users/admin/{id_document}', ['as' => 'user.admin', 'uses' => 'UserController@toggleAdmin', 'middleware' => 'admin']);
+get('/user/{id}/manager', ['as' => 'user.manager', 'uses' => 'UserController@toggleManager', 'middleware' => 'manager']);
+post('/user/{id}/karma', ['as' => 'user.karma', 'uses' => 'UserController@setKarma', 'middleware' => 'manager']);
 
 /**
  * Auth Management
@@ -51,3 +51,4 @@ get('/logout', ['as' => 'logout', 'uses' => 'AuthenticationController@logout']);
 post('/secure/auth', 'SecureController@auth');
 post('/secure/trips', 'SecureController@trips');
 post('/secure/trip', 'SecureController@trip');
+post('/secure/checkin', 'SecureController@checkin');

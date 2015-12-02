@@ -68,7 +68,7 @@ class TripController extends Controller
         ]);
 
         $flash->success('Trip successfully created!');
-        return redirect('/');
+        return back();
     }
 
     public function schedule()

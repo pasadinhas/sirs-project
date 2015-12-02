@@ -7,6 +7,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Cache;
+use ShuttleCli\Attendance;
 use ShuttleCli\Http\Requests;
 use ShuttleCli\Services\SecureService;
 
@@ -44,5 +45,16 @@ class SecureController extends Controller
         return redirect('/');
     }
 
+    public function send($id)
+    {
+        if ( ! is_numeric($id))
+        {
+            return back();
+        }
+
+        $this->service->send(Attendance::where('trip', $id)->get()->toArray(), $id);
+
+        return redirect()->back();
+    }
 
 }

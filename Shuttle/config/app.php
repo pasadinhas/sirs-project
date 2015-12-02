@@ -146,7 +146,7 @@ return [
         Shuttle\Providers\RouteServiceProvider::class,
 
         Laracasts\Flash\FlashServiceProvider::class,
-
+        Greggilbert\Recaptcha\RecaptchaServiceProvider::class
     ],
 
     /*
@@ -197,7 +197,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
         'Flash'     => Laracasts\Flash\Flash::class,
-
+        'Recaptcha' => \Greggilbert\Recaptcha\Facades\Recaptcha::class,
     ],
 
 ];

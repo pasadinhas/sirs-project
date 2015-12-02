@@ -31,6 +31,12 @@ class ShuttleController extends Controller
     {
         $shuttle = Shuttle::find($id);
 
+        if ($shuttle->trips()->future()->count() > 0)
+        {
+            $flash->error("Shuttle {$shuttle->name} has trips booked so it can't be deleted.");
+            return back();
+        }
+
         $shuttle->delete();
 
         $flash->success('Shuttle successfully deleted!');

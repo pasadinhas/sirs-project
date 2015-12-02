@@ -11,6 +11,7 @@ namespace Shuttle\Service;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Shuttle\Booking;
 use Shuttle\Exceptions\CannotBookYetException;
 use Shuttle\Exceptions\ShuttleIsFullException;
 use Shuttle\Trip;
@@ -69,12 +70,38 @@ class BookingService
 
     public function checkin(User $user, Trip $trip)
     {
+        $booking = Booking::where('user_id', $user->id)
+            ->where('trip_id', $trip->id)
+            ->first();
 
+        if ($booking && $booking->went != true)
+        {
+            $booking->went = true;
+            $booking->save();
+            $this->karmaService->checkin($user);
+        }
     }
 
-    public function missed(User $user, Trip $trip)
+    public function markMissing(Trip $trip)
     {
+        $bookings = Booking::where('trip_id', $trip->id)
+            ->whereNull('went')
+            ->get();
 
+        foreach ($bookings as $booking)
+        {
+            $this->missed($booking);
+        }
+    }
+
+    public function missed(Booking $booking)
+    {
+        if ($booking && $booking->went != true)
+        {
+            $booking->went = false;
+            $booking->save();
+            $this->karmaService->miss(User::find($booking->user_id));
+        }
     }
 
     public function canReserveNow(User $user, Trip $trip)

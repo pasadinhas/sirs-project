@@ -14,21 +14,8 @@
                     <th>Email</th>
                     <th>Document ID</th>
                     <th>Karma</th>
-                    @if($user->isAdmin() || $user->isManager())
-                        <th></th>
-                    @endif
-                    <th>Admin</th>
-                    @if($user->isAdmin())
-                        <th></th>
-                    @endif
                     <th>Driver</th>
-                    @if($user->isAdmin() || $user->isManager())
-                        <th></th>
-                    @endif
                     <th>Manager</th>
-                    @if($user->isAdmin() || $user->isManager())
-                        <th></th>
-                    @endif
                 </tr>
                 </thead>
                 <tbody>
@@ -38,76 +25,36 @@
                         <td>{{ $u->username }}</td>
                         <td>{{ $u->email }}</td>
                         <td>{{ $u->id_document }}</td>
-                        <td>{{ $u->karma }}</td>
-                        @if($user->isAdmin() || $user->isManager())
-                            <td>
-                                <form method="post" action="{{ route('user.karma', array('id_document' => $u->id_document)) }}">
-                                    {{ csrf_field() }}
-                                    <div class="col-xs-12 form-group">
-                                        <input class="form-control" type="text" name="karma" placeholder="Karma" maxlength="3">
-                                        <button type="submit" class="btn btn-success btn-xs ">Ok</button>
-                                    </div>
-                                </form>
-                            </td>
-                        @endif
                         <td>
-                            @if($u->isAdmin())
-                                <span class="glyphicon glyphicon-ok"></span>
-                            @else
-                                <span class="glyphicon glyphicon-remove"></span>
-                            @endif
-                        </td>
-                        @if($user->isAdmin())
-                            <td>
-                                <a href="{{ URL::route('user.admin', array('id_document' => $u->id_document)) }}">
-                                    @if($u->isAdmin())
-                                        Unset Admin
-                                    @else
-                                        Set Admin
-                                    @endif
-                                </a>
-                            </td>
-                        @endif
+                            <form action="{{route('user.karma', [$u->id])}}" method="post">
+                                <input type="number" style="width: 7em;" class="form-control input-sm" name="karma" value="{{ $u->karma }}"></td>
+                            </form>
                         <td>
-                            @if($u->isDriver())
-                                <span class="glyphicon glyphicon-ok"></span>
-                            @else
-                                <span class="glyphicon glyphicon-remove"></span>
-                            @endif
+                            <input type="checkbox" @if($u->isDriver()) checked @endif data-id="{{$u->id}}" toggle-driver>
                         </td>
-                        @if($user->isAdmin() || $user->isManager())
-                            <td>
-                                <a href="{{ URL::route('user.driver', array('id_document' => $u->id_document)) }}">
-                                    @if($u->isDriver())
-                                        Unset Driver
-                                    @else
-                                        Set Driver
-                                    @endif
-                                </a>
-                            </td>
-                        @endif
                         <td>
-                            @if($u->isManager())
-                                <span class="glyphicon glyphicon-ok"></span>
-                            @else
-                                <span class="glyphicon glyphicon-remove"></span>
-                            @endif
+                            <input type="checkbox" @if($u->isManager()) checked @endif data-id="{{$u->id}}" toggle-manager>
                         </td>
-                        @if($user->isAdmin() || $user->isManager())
-                            <td>
-                                <a href="{{ URL::route('user.manager', array('id_document' => $u->id_document)) }}">
-                                    @if($u->isManager())
-                                        Unset Manager
-                                    @else
-                                        Set Manager
-                                    @endif
-                                </a>
-                            </td>
-                        @endif
                     </tr>
                 @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+@stop
+
+@section('javascript')
+    <script>
+        $("*[toggle-driver]").change(function(){
+            $("input[type=checkbox]").attr('disabled', true)
+            var id = $(this).data('id')
+            window.location.replace('/user/' + id + '/driver')
+        })
+
+        $("*[toggle-manager]").change(function(){
+            $("input[type=checkbox]").attr('disabled', true)
+            var id = $(this).data('id')
+            window.location.replace('/user/' + id + '/manager')
+        })
+    </script>
 @stop

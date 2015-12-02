@@ -41,4 +41,16 @@ class KarmaService
 
         $user->save();
     }
+
+    public function checkin(User $user)
+    {
+        $user->karma = $user->karma + 12; // 1 hour
+        $user->save();
+    }
+
+    public function miss(User $user)
+    {
+        $user->karma = $user->karma - 60;
+        $user->save();
+    }
 }

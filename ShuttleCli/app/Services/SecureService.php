@@ -55,6 +55,13 @@ class SecureService
         return $this->sessionRequest('/trip', ['id' => $id])->trip;
     }
 
+    public function send($attendances, $trip)
+    {
+        return $this->sessionRequest('/checkin', [
+            'id' => $trip,
+            'attendances' => $attendances
+        ]);
+    }
     // +-----------------------------
     // | Protected Methods
     // +-----------------------------

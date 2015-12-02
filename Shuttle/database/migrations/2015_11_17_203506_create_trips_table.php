@@ -16,6 +16,7 @@ class CreateTripsTable extends Migration
             $table->increments('id');
             $table->integer('shuttle_id')->index();
             $table->integer('driver_id')->index();
+            $table->boolean('done')->default(false);
             $table->string('origin');
             $table->string('destination');
             $table->dateTime('leaves_at');

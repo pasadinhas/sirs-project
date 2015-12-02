@@ -45,7 +45,7 @@ class User extends Model implements AuthenticatableContract,
 
     public function isManager()
     {
-        return $this->is_manager;
+        return $this->is_manager || $this->is_admin;
     }
 
     public function isAdmin()

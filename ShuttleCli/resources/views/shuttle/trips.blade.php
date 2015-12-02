@@ -11,7 +11,9 @@
         </tr>
         @foreach($trips as $trip)
         <tr>
-            <td>{{(new \Carbon\Carbon($trip->leaves_at))->diffForHumans()}}</td>
+            <td>
+                <a href="/trip/{{$trip->id}}">{{(new \Carbon\Carbon($trip->leaves_at))->diffForHumans()}}</a>
+            </td>
             <td>{{$trip->origin}}</td>
             <td>{{$trip->destination}}</td>
         </tr>
