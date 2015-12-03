@@ -48,6 +48,7 @@
 
 @section('modal')
     <form action="{{ route('trip.store') }}" method="post">
+        {{csrf_field()}}
         <div class="modal fade" id="modalCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

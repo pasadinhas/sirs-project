@@ -9,16 +9,13 @@
                     background: url('/imgs/bg{{mt_rand(1,2)}}.jpg') !important;
                     background-size: cover !important;
                     color: white;
-                    text-shadow: 1px 1px black;
+                    text-shadow: 0 0 5px black;
                 }
 
                 .jumbotron {
                     background: rgba(0,0,0,0.3);
                 }
 
-                .welcome-description, .welcome-text {
-                    text-shadow: 2px 2px black;
-                }
             </style>
         @stop
 

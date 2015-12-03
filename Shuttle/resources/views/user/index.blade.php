@@ -27,6 +27,7 @@
                         <td>{{ $u->id_document }}</td>
                         <td>
                             <form action="{{route('user.karma', [$u->id])}}" method="post">
+                                {{csrf_field()}}
                                 <input type="number" style="width: 7em;" class="form-control input-sm" name="karma" value="{{ $u->karma }}"></td>
                             </form>
                         <td>

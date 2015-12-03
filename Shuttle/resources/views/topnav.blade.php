@@ -13,7 +13,6 @@
 
                         <!-- All Users Tabs -->
 
-                        <li {!! active('/') !!}><a href="/">Home</a></li>
                         <li {!! active('booking') !!}><a href="{{route('booking.index')}}">Book a Shuttle</a></li>
                         <li {!! active('booking/mine') !!}><a href="{{route('booking.mine')}}">My Bookings</a></li>
                         
