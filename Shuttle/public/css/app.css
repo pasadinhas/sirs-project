@@ -1,5 +1,7 @@
 body {
     padding-top: 80px;
+    background: url('/imgs/bg2.jpg');
+    background-size: cover !important;
 }
 
 .table {
@@ -7,19 +9,8 @@ body {
     word-wrap: break-word;
 }
 
-.row-fluid{
-    margin-left: -27px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.welcome-text-box{
-    height: 200px;
-    width: 700px !important;
-}
-
 .welcome-text{
-    font-size: 74px !important;
+    font-size: 58px !important;
 }
 
 .brand {
@@ -32,6 +23,7 @@ body {
 
 .jumbotron {
     padding: 20px 40px !important;
+    background: rgba(220,220,220,0.8);
 }
 
 .jumbotron h2 {

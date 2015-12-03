@@ -1,8 +1,8 @@
 <?php
 
-get('/', function () {
+get('/', ['middleware' => 'guest', function () {
     return view('home');
-});
+}]);
 
 /**
  * Shuttle Management

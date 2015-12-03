@@ -3,18 +3,35 @@
 @section('content')
     @if(!Auth::check())
 
+        @section('style')
+            <style rel="stylesheet">
+                body {
+                    background: url('/imgs/bg{{mt_rand(1,2)}}.jpg') !important;
+                    background-size: cover !important;
+                    color: white;
+                    text-shadow: 1px 1px black;
+                }
+
+                .jumbotron {
+                    background: rgba(0,0,0,0.3);
+                }
+
+                .welcome-description, .welcome-text {
+                    text-shadow: 2px 2px black;
+                }
+            </style>
+        @stop
+
     <br>
     <br>
     <br>
-    <div class="jumbotron row">
-        <div class="row-fluid">
-            <div class="col-lg-1 welcome-text-box">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-6">
                 <h1 class="welcome-text">Welcome to Wonder Shuttle!</h1>
                 <p class="welcome-description">Pick a date and a destination, we and the Force will take care of the rest!</p>
             </div>
-            <div class="col-lg-3 col-md-offset-1 col-md-2">
-                <h2>Login</h2>
-                <br>
+            <div class="col-md-5 col-md-offset-1">
                 <form method="post" action="{{ route('login') }}">
                     {{ csrf_field() }}
                     <div class="form-group">
@@ -30,9 +47,10 @@
                 </form>
             </div>
         </div>
-        <div class="row-fluid">
-        <div class="col-md-offset-0 col-md-4">
-                <h2>Register</h2>
+        <br/><br/><br/>
+        <div class="row">
+            <div class="col-lg-offset-7 col-md-5">
+                <h4>New to WonderShuttle? Create an account!</h4>
                 <form method="post" action="{{ route('user.store') }}">
                     {{ csrf_field() }}
                     <div class="form-group">
