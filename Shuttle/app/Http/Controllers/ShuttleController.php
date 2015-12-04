@@ -5,6 +5,7 @@ namespace Shuttle\Http\Controllers;
 use Laracasts\Flash\FlashNotifier;
 use Shuttle\Http\Controllers\Controller;
 use Shuttle\Http\Requests\CreateShuttleRequest;
+use Shuttle\Http\Requests\EditShuttleKeyRequest;
 use Shuttle\Shuttle;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -51,9 +52,9 @@ class ShuttleController extends Controller
         return redirect(route('shuttle.index'));
     }
 
-    public function key(Request $request, FlashNotifier $flash)
+    public function key($id, EditShuttleKeyRequest $request, FlashNotifier $flash)
     {
-        $shuttle = Shuttle::findOrFail($request->get('id'));
+        $shuttle = Shuttle::findOrFail($id);
 
         $shuttle->key = $request->get('key');
 

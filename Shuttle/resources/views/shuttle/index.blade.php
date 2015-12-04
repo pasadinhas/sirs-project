@@ -69,7 +69,7 @@
 @stop
 
 @section('modal')
-    <form action="{{ route('shuttle.edit.key') }}" method="post">
+    <form action="" method="post" id="editKey">
         {{ csrf_field() }}
         <input type="hidden" value="" name="id" value-shuttle-id>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -137,6 +137,7 @@
                 }
                 $('*[value-shuttle-id]').val(data_id);
                 $('*[text-shuttle-id]').text(data_id);
+                $('#editKey').attr('action', '/shuttle/' + data_id + '/key')
             })
         });
         $('#myModal').on('shown.bs.modal', function () {
