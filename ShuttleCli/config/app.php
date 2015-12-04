@@ -2,6 +2,10 @@
 
 return [
 
+    'shuttle' => env('SHUTTLE_ID'),
+
+    'server' => env('SERVER_URL'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

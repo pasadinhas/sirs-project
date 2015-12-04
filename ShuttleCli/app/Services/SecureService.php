@@ -20,11 +20,21 @@ class SecureService
 
     function __construct(Encrypter $encrypter, Repository $cache)
     {
+        if (config('app.shuttle') == null)
+        {
+            die('No shuttle configured.');
+        }
+
+        if (config('app.server') == null)
+        {
+            die('No server url configured.');
+        }
+
         $this->cache = $cache;
         $this->http = new Client();
         $this->encrypter = $encrypter;
         $this->validate = new ValidatorService();
-        $this->server = config('server.uri', 'http://localhost:8000');
+        $this->server = config('app.server');
         $this->uri = $this->server . '/secure';
     }
 
@@ -107,7 +117,7 @@ class SecureService
     {
         $response = $this->http->post($this->uri . $uri, [
             'json' => [
-                'id' => config('shuttle.id', 'S01'),
+                'id' => config('app.shuttle'),
                 'secure' => $this->encrypter->encrypt(json_encode($secure)),
             ]
         ]);
