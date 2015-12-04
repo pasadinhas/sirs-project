@@ -5,9 +5,7 @@
     <title>Reservations System</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
-    <style>
-
-    </style>
+    <link rel="shortcut icon" href="/imgs/logo.png">
     @yield('style')
 </head>
 <body>

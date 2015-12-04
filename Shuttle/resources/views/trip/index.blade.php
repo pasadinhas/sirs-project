@@ -16,11 +16,12 @@
                     <th>Destination</th>
                     <th>Departure time</th>
                     <th>Arrival time</th>
+                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <a href="#create" data-toggle="modal" data-target="#modalCreate"><span style="color: #3c763d" class="glyphicon glyphicon-plus"></span></a>
                         </td>
                     </tr>
@@ -33,10 +34,19 @@
                         <td>{{ $trip->destination }}</td>
                         <td>{{ $trip->leaves_at }}</td>
                         <td>{{ $trip->arrives_at }}</td>
+                        <td>
+                            <form action="{{route('trip.destroy', [$trip->id])}}" method="post">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="submit" class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <a href="#create" data-toggle="modal" data-target="#modalCreate"><span style="color: #3c763d" class="glyphicon glyphicon-plus"></span></a>
                         </td>
                     </tr>

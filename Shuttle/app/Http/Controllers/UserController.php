@@ -11,9 +11,11 @@ use Shuttle\User;
 
 class UserController extends Controller
 {
-    public function create()
+    function __construct()
     {
-        return view('user.create');
+        $this->middleware('manager', ['except' => ['store', 'profile']]);
+        $this->middleware('auth', ['only' => 'profile']);
+        $this->middleware('guest', ['only' => 'store']);
     }
 
     public function index()
@@ -83,7 +85,6 @@ class UserController extends Controller
 
     }
 
-    //TODO: NOT WORKING
     public function setKarma(Request $request, $id)
     {
         $user = User::find($id);

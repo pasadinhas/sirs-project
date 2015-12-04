@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('password', 60);
             $table->string('id_document')->unique();
-            $table->integer('karma');
+            $table->integer('karma')->default(144);
             $table->rememberToken();
             $table->timestamps();
             $table->boolean('is_admin')->default(false);

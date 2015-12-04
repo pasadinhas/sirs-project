@@ -25,8 +25,8 @@ class CreateShuttleRequest extends Request
     {
         return [
             'name' => 'required',
-            'seats' => 'required',
-            'key' => 'required',
+            'seats' => 'required|integer',
+            'key' => 'required|alpha_num|size:32',
         ];
     }
 }

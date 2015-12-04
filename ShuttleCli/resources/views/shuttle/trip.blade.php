@@ -37,5 +37,9 @@
         @endforeach
     </table>
 
-    <a href="/trip/{{$trip->id}}/send"><button class="btn btn-primary">Finish Attendance Check</button></a>
+    @unless(\ShuttleCli\Trip::where('trip_id', $trip->id)->first() == null)
+        <button class="btn btn-default" disabled>Already submited</button>
+    @else
+        <a href="/trip/{{$trip->id}}/send"><button class="btn btn-primary">Finish Attendance Check</button></a>
+    @endunless
 @stop

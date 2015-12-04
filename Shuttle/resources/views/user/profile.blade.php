@@ -4,15 +4,14 @@
     <div class="jumbotron">
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5  toppad" >
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8  toppad" >
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">{{ $user->name }}</h3>
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <div class=" col-md-10 col-lg-10 ">
-
+                                <div class="col-md-10 col-lg-10 ">
                                     <table class="table table-user-information">
                                         <tbody>
                                         <tr>
@@ -48,20 +47,6 @@
                         </div>
                     </div>
                 </div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <div class="col-lg-3">
-                Change email address:
-                <form method="post" action="{{ route('login') }}">
-                    {{ csrf_field() }}
-                    <div class="form-group">
-                        <input class="form-control" type="email" name="email" placeholder="Email">
-                    </div>
-                    <button type="submit" class="btn btn-success form-control">Update</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

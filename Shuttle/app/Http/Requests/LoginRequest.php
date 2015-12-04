@@ -24,8 +24,8 @@ class LoginRequest extends Request
     public function rules()
     {
         return [
-            'username' => 'required',
-            'password' => 'required',
+            'username' => 'required|string',
+            'password' => 'required|string',
             'g-recaptcha-response' => 'required|recaptcha',
         ];
     }

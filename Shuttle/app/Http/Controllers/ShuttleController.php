@@ -13,12 +13,7 @@ class ShuttleController extends Controller
 
     function __construct()
     {
-        $this->middleware('manager|driver');
-    }
-
-    public function create()
-    {
-        return view('shuttle.create');
+        $this->middleware('manager');
     }
 
     public function index()
@@ -29,7 +24,7 @@ class ShuttleController extends Controller
 
     public function destroy($id, FlashNotifier $flash)
     {
-        $shuttle = Shuttle::find($id);
+        $shuttle = Shuttle::findOrFail($id);
 
         if ($shuttle->trips()->future()->count() > 0)
         {
@@ -50,18 +45,20 @@ class ShuttleController extends Controller
             'seats' => $request->seats,
             'key' => $request->key,
         ]);
+
         $flash->success('Shuttle successfully created!');
+
         return redirect(route('shuttle.index'));
     }
 
-    public function show($name)
+    public function key(Request $request, FlashNotifier $flash)
     {
-        $shuttle = Shuttle::where('name', $name)->first();
-        return view('shuttle.show', compact('shuttle'));
-    }
+        $shuttle = Shuttle::findOrFail($request->get('id'));
 
-    public function key(Request $request)
-    {
+        $shuttle->key = $request->get('key');
 
+        $flash->success('Shuttle key successfully modified!');
+
+        return back();
     }
 }

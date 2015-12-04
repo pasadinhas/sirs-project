@@ -16,8 +16,8 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        HttpException::class,
-        ModelNotFoundException::class,
+        //HttpException::class,
+        //ModelNotFoundException::class,
     ];
 
     /**
@@ -42,8 +42,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if (!config('app.debug'))
+        {
+            return response()->view('errors.500');
+        }
+
         if ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e);
+            return parent::render($request, new NotFoundHttpException);
         }
 
         return parent::render($request, $e);

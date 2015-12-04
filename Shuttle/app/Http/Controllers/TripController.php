@@ -22,14 +22,9 @@ class TripController extends Controller
         $this->middleware('driver', ['only' => 'schedule']);
     }
 
-    public function create()
-    {
-        return view('trip.create');
-    }
-
     public function index()
     {
-        $trips = Trip::all();
+        $trips = Trip::orderBy('leaves_at')->get();
         return view('trip.index', compact('trips'));
     }
 
@@ -68,6 +63,24 @@ class TripController extends Controller
         ]);
 
         $flash->success('Trip successfully created!');
+
+        return back();
+    }
+
+    public function destroy($id, FlashNotifier $notifier)
+    {
+        $trip = Trip::findOrFail($id);
+
+        if ($trip->passengers()->count() > 0)
+        {
+            $notifier->error('That trip already has passengers. No way we can delete it...');
+            return back();
+        }
+
+        $trip->delete();
+
+        $notifier->success('Trip successfully deleted!');
+
         return back();
     }
 

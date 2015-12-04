@@ -49,7 +49,7 @@ class BookingController extends Controller
             $trips->whereBetween('leaves_at', [$day, $dayAfter]);
         }
 
-        $trips = $trips->get();
+        $trips = $trips->orderBy('leaves_at')->get();
 
         $reservations = Auth::user()->reservations;
 
@@ -100,7 +100,7 @@ class BookingController extends Controller
 
     public function mine()
     {
-        $reservations = Auth::user()->reservations()->future()->get();
+        $reservations = Auth::user()->reservations()->future()->orderBy('leaves_at')->get();
         return view('booking.mine', compact('reservations'));
     }
 }

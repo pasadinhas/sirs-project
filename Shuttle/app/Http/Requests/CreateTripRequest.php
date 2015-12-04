@@ -24,12 +24,12 @@ class CreateTripRequest extends Request
     public function rules()
     {
         return [
-            'shuttle_id' => 'required',
-            'driver_id' => 'required',
-            'origin' => 'required',
-            'destination' => 'required',
-            'leaves_at' => 'required',
-            'arrives_at' => 'required',
+            'shuttle_id' => 'required|integer',
+            'driver_id' => 'required|integer',
+            'origin' => 'required|string',
+            'destination' => 'required|string',
+            'leaves_at' => 'required|date',
+            'arrives_at' => 'required|date',
         ];
     }
 }

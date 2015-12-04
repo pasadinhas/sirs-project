@@ -23,7 +23,17 @@ class KarmaService
 
     public function bonus(User $user)
     {
-        return $user->karma * 5;
+        $karma = $user->karma;
+
+        if ($karma < 0)
+        {
+            $karma = 0;
+        } else if ($karma > 4320)
+        {
+            $karma = 4320;
+        }
+
+        return $karma * 5;
     }
 
     public function cancelReservation(User $user, Trip $trip)

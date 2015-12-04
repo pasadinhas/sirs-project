@@ -24,7 +24,7 @@ class CreateBookingRequest extends Request
     public function rules()
     {
         return [
-            'trip_id' => 'required',
+            'trip_id' => 'required|integer',
         ];
     }
 }

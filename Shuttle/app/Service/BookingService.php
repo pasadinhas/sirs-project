@@ -34,7 +34,7 @@ class BookingService
     {
         if ($trip->passengers->contains($user))
         {
-
+            throw new \Exception("User already booked this trip");
         }
 
         if ( ! $this->canReserveNow($user, $trip))

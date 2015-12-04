@@ -30,7 +30,7 @@
                     </tr>
                     @foreach ($shuttles as $shuttle)
                         <tr>
-                            <td><a href="{{route('shuttle.show', [$shuttle->name])}}">{{ $shuttle->name }}</a></td>
+                            <td>{{ $shuttle->name }}</td>
                             <td>{{ $shuttle->id }}</td>
                             <td>{{ $shuttle->seats }}</td>
                             <td align="center" width="7%">

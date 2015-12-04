@@ -24,11 +24,11 @@ class CreateUserRequest extends Request
     public function rules()
     {
         return [
-            'username' => 'required',
-            'name' => 'required',
-            'password' => 'required',
-            'email' => 'required',
-            'id_document' => 'required',
+            'username' => 'required|min:3|alpha_dash',
+            'name' => 'required|string',
+            'password' => 'required|string',
+            'email' => 'required|email',
+            'id_document' => 'required|alpha_num',
         ];
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use ShuttleCli\Attendance;
 use ShuttleCli\Http\Requests;
 use ShuttleCli\Services\SecureService;
+use ShuttleCli\Trip;
 
 class SecureController extends Controller
 {
@@ -52,7 +53,14 @@ class SecureController extends Controller
             return back();
         }
 
+        if (Trip::where('trip_id', $id)->first() != null)
+        {
+            throw new \Exception("Trip already sent to server");
+        }
+
         $this->service->send(Attendance::where('trip', $id)->get()->toArray(), $id);
+
+        Trip::create(['trip_id' => $id]);
 
         return redirect()->back();
     }

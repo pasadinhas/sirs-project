@@ -8,14 +8,14 @@ get('/', ['middleware' => 'guest', function () {
  * Shuttle Management
  */
 
-resource('shuttle', 'ShuttleController', ['only' => ['index', 'show', 'store', 'create', 'destroy']]);
+resource('shuttle', 'ShuttleController', ['only' => ['index', 'store', 'destroy']]);
 post('shuttle/{id}/key', ['uses' => 'ShuttleController@key', 'as' => 'shuttle.edit.key']);
 
 /**
  * Trip Management
  */
 
-resource('trip', 'TripController', ['only' => ['index', 'store', 'create', 'destroy']]);
+resource('trip', 'TripController', ['only' => ['index', 'store', 'destroy']]);
 get('schedule', ['as' => 'trip.schedule', 'uses' => 'TripController@schedule']);
 
 /**
@@ -29,7 +29,7 @@ get('booking/mine', ['as' => 'booking.mine', 'uses' => 'BookingController@mine']
  * Users Management
  */
 
-resource('user', 'UserController');
+resource('user', 'UserController', ['only' => ['index', 'store']]);
 
 get('/user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);
 get('/user/{id}/driver', ['as' => 'user.driver', 'uses' => 'UserController@toggleDriver', 'middleware' => 'manager']);
