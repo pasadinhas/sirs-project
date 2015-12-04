@@ -31,7 +31,6 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'email' => $request->email,
             'id_document' => $request->id_document,
-            'karma' => 10,
         ]);
 
         return redirect('/');
