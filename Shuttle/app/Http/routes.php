@@ -29,6 +29,7 @@ get('booking/mine', ['as' => 'booking.mine', 'uses' => 'BookingController@mine']
  * Users Management
  */
 
+get('/account/create', ['middleware' => 'guest', function() { return view('user.create'); }]);
 resource('user', 'UserController', ['only' => ['index', 'store']]);
 
 get('/user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile', 'middleware' => 'auth']);

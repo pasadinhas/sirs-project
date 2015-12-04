@@ -25,13 +25,15 @@ class UserController extends Controller
     }
 
     public function store(CreateUserRequest $request) {
-        $u = User::create([
+        $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'password' => bcrypt($request->password),
             'email' => $request->email,
             'id_document' => $request->id_document,
         ]);
+
+        Auth::login($user);
 
         return redirect('/');
     }

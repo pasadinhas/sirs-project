@@ -29,6 +29,7 @@ class CreateUserRequest extends Request
             'password' => 'required|string',
             'email' => 'required|email',
             'id_document' => 'required|alpha_num',
+            'g-recaptcha-response' => 'required|recaptcha',
         ];
     }
 }
